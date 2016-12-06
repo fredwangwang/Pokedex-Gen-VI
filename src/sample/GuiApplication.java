@@ -26,6 +26,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import FinalProject.AutoLoginDialog;
+
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class GuiApplication implements ActionListener, ListSelectionListener {
@@ -58,7 +60,7 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
 
     void open() {
         model = new GuiModel();
-        GuiLoginDialog loginDialog = new GuiLoginDialog(model);
+        AutoLoginDialog loginDialog = new AutoLoginDialog(model);
         loginDialog.open();
 
         frame = new JFrame("CSCI 403 Example");
