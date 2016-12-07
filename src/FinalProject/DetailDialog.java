@@ -30,6 +30,7 @@ public class DetailDialog extends JDialog {
 
 	//
 	public DetailDialog() {
+		setTitle("Detail Info");
 		PokemonID = 0;
 		Initialize();
 	}

@@ -1,0 +1,3 @@
+# put your ideas here... which we will implement
+
+1.	search all <type> type pokemons, like all 'normal' type
