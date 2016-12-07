@@ -40,17 +40,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-public class PokeDex implements ActionListener, ListSelectionListener{
+public class PokeDex implements ActionListener, ListSelectionListener, KeyListener{
 	public static final String PokemonIconDir = "data\\pokemon\\icons\\";
 
-	private JFrame frmPokedex;
+	private JFrame framePokedex;
 	private JTextField searchField;
 
-	private PokeTableModel pktbModel;
+	private PokeTableModel poketableModel;
 	private AutoLoginDialog login;
 
 	// Widgets
@@ -72,7 +74,7 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 			public void run() {
 				try {
 					PokeDex window = new PokeDex();
-					window.frmPokedex.setVisible(true);
+					window.framePokedex.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -82,36 +84,38 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 
 	public PokeDex() {
 		initialize();
+		framePokedex.addKeyListener(this);
 	}
 
 	private void initialize() {
-		pktbModel = new PokeTableModel();
+		poketableModel = new PokeTableModel();
 
-		login = new AutoLoginDialog(pktbModel);
+		login = new AutoLoginDialog(poketableModel);
 		login.open();
 
-		frmPokedex = new JFrame();
-		frmPokedex.setIconImage(Toolkit.getDefaultToolkit().getImage("data\\icon\\dex.png"));
-		frmPokedex.setTitle("Pokedex");
+		framePokedex = new JFrame();
+		framePokedex.setResizable(false);
+		framePokedex.setIconImage(Toolkit.getDefaultToolkit().getImage("data\\icon\\dex.png"));
+		framePokedex.setTitle("Pokedex");
 
-		frmPokedex.setBounds(100, 100, 450, 300);
-		frmPokedex.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		framePokedex.setBounds(100, 100, 400, 600);
+		framePokedex.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel SearchPanel = new JPanel();
-		frmPokedex.getContentPane().add(SearchPanel, BorderLayout.NORTH);
+		framePokedex.getContentPane().add(SearchPanel, BorderLayout.NORTH);
 
 		pokemonLabel = new JLabel("Pokemon:");
 		SearchPanel.add(pokemonLabel);
 
 		searchField = new JTextField();
 		SearchPanel.add(searchField);
-		searchField.setColumns(25);
+		searchField.setColumns(15);
 
 		searchButton = new JButton("Search");
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					pktbModel.basicSearch(searchField.getText());
+					poketableModel.basicSearch(searchField.getText());
 				} catch (SQLException e1) {
 					sqlExceptionHandler(e1);
 				}
@@ -121,7 +125,7 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 		SearchPanel.add(searchButton);
 
 		JPanel ControlPanel = new JPanel();
-		frmPokedex.getContentPane().add(ControlPanel, BorderLayout.SOUTH);
+		framePokedex.getContentPane().add(ControlPanel, BorderLayout.SOUTH);
 		ControlPanel.setLayout(new GridLayout(0, 3, 0, 0));
 
 		detailButton = new JButton("Detail");
@@ -132,9 +136,10 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 		});
 		ControlPanel.add(detailButton);
 
-		advSearchButton = new JButton("Advanced Search");
+		advSearchButton = new JButton("Adv. Search");
 		advSearchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				AdvSearch advSearch = new AdvSearch(poketableModel);
 			}
 		});
 		ControlPanel.add(advSearchButton);
@@ -148,7 +153,7 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 		ControlPanel.add(quitButton);
 
 		JScrollPane scrollPane = new JScrollPane();
-		frmPokedex.getContentPane().add(scrollPane, BorderLayout.CENTER);
+		framePokedex.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
 		table = new JTable(){
 			@Override
@@ -161,11 +166,11 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 		table.setRowHeight(30);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(this);
-		table.setModel(pktbModel);
+		table.setModel(poketableModel);
 		scrollPane.setViewportView(table);
 
 		menuBar = new JMenuBar();
-		frmPokedex.setJMenuBar(menuBar);
+		framePokedex.setJMenuBar(menuBar);
 
 		fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
@@ -183,7 +188,7 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 	}
 
 	private void sqlExceptionHandler(SQLException e) {
-		JOptionPane.showMessageDialog(frmPokedex,
+		JOptionPane.showMessageDialog(framePokedex,
 				"Database error: " + e.getMessage(),
 				"Database error",
 				ERROR_MESSAGE);
@@ -192,13 +197,26 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+	}
 
+	
+	// KeyListener
+	@Override
+	public void keyPressed(KeyEvent e) {
+		//System.out.println("keypressed");
+	}
+	@Override
+	public void keyReleased(KeyEvent e) {}
+	@Override
+	public void keyTyped(KeyEvent e) {
+		System.out.println("keytyped");
+		searchField.grabFocus();
+		searchField.setText(Character.toString(e.getKeyChar() ));
 	}
 
 

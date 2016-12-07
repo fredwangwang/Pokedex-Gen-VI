@@ -1,25 +1,29 @@
 package FinalProject;
 
+import static FinalProject.PokeDex.PokemonIconDir;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class AdvSearch extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-
+	private PokeTableModel pktablemodel;
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			AdvSearch dialog = new AdvSearch();
+			AdvSearch dialog = new AdvSearch(null);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -28,7 +32,17 @@ public class AdvSearch extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public AdvSearch() {
+	public AdvSearch(PokeTableModel m) {
+		pktablemodel = m;
+		
+		Initialize();
+		
+	}
+
+	private void Initialize() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+"0.png"));
+		setTitle("Advance Search");
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
@@ -46,10 +60,16 @@ public class AdvSearch extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
+		
+		setVisible(true);
 	}
-
 }

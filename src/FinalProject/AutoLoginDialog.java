@@ -23,7 +23,6 @@ public class AutoLoginDialog extends JDialog {
 
 	public void open() {
 		setTitle("Login");
-		System.out.println("haliluya");
 
 		this.setLayout(new BorderLayout());
 		this.setSize(new Dimension(400, 150));
