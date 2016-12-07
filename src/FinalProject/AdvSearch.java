@@ -3,9 +3,12 @@ package FinalProject;
 import static FinalProject.PokeDex.PokemonIconDir;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -20,6 +23,7 @@ import javax.swing.JList;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.JCheckBox;
+import javax.swing.JScrollBar;
 
 public class AdvSearch extends JDialog {
 
@@ -33,6 +37,11 @@ public class AdvSearch extends JDialog {
 
 	// data
 	private Vector<Vector> types;
+	private JCheckBox chckbxNewCheckBox;
+	private JPanel panel;
+	private JButton btnNewButton;
+	private JSeparator separator_1;
+	private JButton btnNewButton_1;
 
 	public static void main(String[] args) {
 		try {
@@ -62,9 +71,16 @@ public class AdvSearch extends JDialog {
 		contentPanel.add(chckbxType);
 
 		// initialize type combo box
+
 		try {
-			types = pktablemodel.getPokemonType();
+			// debug only
+			if (pktablemodel == null){
+				pktablemodel = new PokeTableModel();
+				pktablemodel.login("huhwang", "Pokemon");
+			}
+			types = pktablemodel.getPokemonStatus();
 			comboBox = new JComboBox<String>(types.elementAt(1));
+			comboBox.setSelectedIndex(0);
 			contentPanel.add(comboBox);
 		} 
 		catch (SQLException e1) {
@@ -73,6 +89,13 @@ public class AdvSearch extends JDialog {
 		catch (NullPointerException e2){
 			System.out.println("Null pointer");
 		}
+		catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		chckbxNewCheckBox = new JCheckBox("New 111box");
+		contentPanel.add(chckbxNewCheckBox);
 
 		{
 			JPanel buttonPane = new JPanel();
@@ -95,7 +118,26 @@ public class AdvSearch extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
+		//		{
+		//			panel = new JPanel();
+		//			panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+		//			addAButton("Button 1", panel);
+		//			addAButton("Button 2", panel);
+		//			addAButton("Button 3", panel);
+		//			addAButton("Long-Named Button 4", panel);
+		//			addAButton("5", panel);
+		//			getContentPane().add(panel, BorderLayout.NORTH);
+		//
+		//		}
+
 
 		setVisible(true);
+
+	}
+
+	private void addAButton(String text, Container container) {
+		JButton button = new JButton(text);
+		button.setAlignmentX(Component.CENTER_ALIGNMENT);
+		container.add(button);
 	}
 }

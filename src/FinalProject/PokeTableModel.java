@@ -28,7 +28,8 @@ public class PokeTableModel extends DefaultTableModel {
 
 	Connection db;
 	Vector<Integer> nationalPokeID;   
-	int selectedRow;           
+	int selectedRow;     
+	int SelectedPokemonID;
 
 	public PokeTableModel() {
 		Object[] columns = {"Pic", "Name", "Type(s)"};
@@ -44,24 +45,25 @@ public class PokeTableModel extends DefaultTableModel {
 
 	public void setSelectedRow(int selectedRow) {
 		this.selectedRow = selectedRow;
-	}
-
-	public int getPokemonID() {
 		if (selectedRow != -1) {
-			return nationalPokeID.elementAt(selectedRow);
+			if (nationalPokeID.size() > SelectedPokemonID)
+				SelectedPokemonID =  nationalPokeID.elementAt(selectedRow);
 		}
 		else {
-			return -1;
+			SelectedPokemonID =  0;
 		}
 	}
 
-	public String getPokemonName() {
-		if (selectedRow != -1) {
-			return (String) getValueAt(selectedRow, 1);
-		}
-		else {
-			return "";
-		}
+	public int getSelectedPokemonID() {
+		return SelectedPokemonID;
+	}
+
+	public String getSelectedPokemonName() {
+		return (String) getValueAt(selectedRow, 1);
+	}
+
+	public String getSelectedPokemonType() {
+		return (String) getValueAt(selectedRow, 2);
 	}
 
 	// Queries
@@ -95,7 +97,7 @@ public class PokeTableModel extends DefaultTableModel {
 		this.fireTableDataChanged();
 	}
 
-	public void basicSearch(String val) throws SQLException {
+	public void nameSearch(String val) throws SQLException {
 		ResultSet result;
 		String query =
 				"SELECT pkids.id, pspecies.identifier, types.identifier " +
@@ -111,7 +113,7 @@ public class PokeTableModel extends DefaultTableModel {
 		setTable(result);
 	}
 
-	public Vector<Vector> getPokemonType() throws SQLException {
+	public Vector<Vector> getPokemonStatus() throws SQLException {
 		Vector<String> typeNames = new Vector<>();
 		Vector<Integer> typeInts = new Vector<>();
 
@@ -124,13 +126,58 @@ public class PokeTableModel extends DefaultTableModel {
 		ResultSet result = stmt.executeQuery(query);
 		while(result.next()){
 			typeInts.add(result.getInt(1));
-			typeNames.add(result.getString(2));			
+			typeNames.add(CommonUtils.capitalize(result.getString(2)));			
 		}
 
 		Vector<Vector> type = new Vector<>();
 		type.add(typeInts);
 		type.add(typeNames);
-		
+
 		return type;
+	}
+
+	// TODO 
+	public String getSelectedPokemoneggGroup(int id) throws SQLException {
+		String egggroup = "";
+		ResultSet result;
+		String query =
+				"";
+		PreparedStatement ps = db.prepareStatement(query);
+		ps.setInt(1, id);
+		result =  ps.executeQuery();
+
+		result.next();
+		egggroup = result.getString(1);
+
+		while (result.next()){
+			egggroup += ", " +result.getString(1);
+		}
+		
+		return egggroup;
+	}
+
+	public String getSelectedPokemonCaptureRate(int id){
+		// TODO do query
+		// query returns int, make it a string to return (pokemonspecies)
+
+		return "";
+	}
+
+	public String getSelectedPokemonGenderRatio(int id){
+		// TODO do query
+		// query returns int, make it a string to return (pokemonspecies)
+		return "";
+	}
+
+	public String getSelectedPokemonBaseExp(int id){
+		// TODO do query
+		// query returns int, make it a string to return (pokemonspecies)
+		return "";
+	}
+
+	public String getSelectedPokemonBaseHappness(int id){
+		// TODO do query
+		// query returns int, make it a string to return (pokemonspecies)
+		return "";
 	}
 }

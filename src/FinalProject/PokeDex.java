@@ -116,7 +116,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					poketableModel.basicSearch(searchField.getText());
+					poketableModel.nameSearch(searchField.getText());
 				} catch (SQLException e1) {
 					CommonUtils.sqlExceptionHandler(e1, framePokedex);
 				}
@@ -130,9 +130,10 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		ControlPanel.setLayout(new GridLayout(0, 3, 0, 0));
 
 		detailButton = new JButton("Detail");
+		detailButton.setEnabled(false);
 		detailButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DetailDialog detail = new DetailDialog();
+				DetailDialog detail = new DetailDialog(poketableModel);
 			}
 		});
 		ControlPanel.add(detailButton);
@@ -192,7 +193,12 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		// TODO Auto-generated method stub
+		if (table.getSelectedRow() == -1)
+			detailButton.setEnabled(false);
+		else
+			detailButton.setEnabled(true);
+		
+		poketableModel.setSelectedRow(table.getSelectedRow());
 	}
 
 	@Override
@@ -214,6 +220,4 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		searchField.grabFocus();
 		searchField.setText(Character.toString(e.getKeyChar()));
 	}
-
-
 }

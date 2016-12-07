@@ -6,7 +6,7 @@
 
 /*	1. Given national pokedex id, find the name of the pokemon	*/
 SELECT identifier 
-FROM pokemon_species
+FROM pokemon_species AS ps
 WHERE id = %s;
 
 /*	2. Given national pokedex id, find the stats of the pokemon	*/
