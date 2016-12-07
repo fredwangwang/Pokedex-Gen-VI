@@ -41,19 +41,6 @@ public class DetailDialog extends JDialog {
 	private JTextField txtHh;
 
 
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			DetailDialog dialog = new DetailDialog();
-			//dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	//
 	public DetailDialog() {
 		setTitle("Detail Info");

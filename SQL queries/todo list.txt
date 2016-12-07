@@ -22,3 +22,4 @@ Note: some pokemon have 2 types, be careful when write query
 Certain query should be made to have formatted output: [id, identifier, type]. Duplications caused by two-type now can be handled by the program. MAKE LIFE EASIER
 
 TODO:
+13 Todos in PokeTableModel.java

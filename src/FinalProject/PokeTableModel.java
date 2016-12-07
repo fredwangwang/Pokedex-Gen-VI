@@ -152,7 +152,7 @@ public class PokeTableModel extends DefaultTableModel {
 		while (result.next()){
 			egggroup += ", " +result.getString(1);
 		}
-		
+
 		return egggroup;
 	}
 
@@ -180,4 +180,28 @@ public class PokeTableModel extends DefaultTableModel {
 		// query returns int, make it a string to return (pokemonspecies)
 		return "";
 	}
+
+	public String getSelectedPokemonGeneration(int id){
+		// TODO do query
+		//  (query 4)
+		return "";
+	}
+
+	public String getSelectedPokemonRegion(int id){
+		// TODO do query
+		//  (query 4 & 7)
+		return "";
+	}
+	
+	public Vector<Integer> getSelectedPokemonStatus(int id){
+		// TODO do query
+		//  (modify query 2)
+		return null;
+	}
+	
+	// add query 5 here.
+	// add query 6 here.
+	// add query 10 here
+	// add query 11 here
+	// add query 12 here.
 }
