@@ -59,9 +59,9 @@ FROM pokemon_species
 WHERE generation_id = %s;
 
 /*	10. Given condition stats, find all ids of qualified pokemon	*/
-SELECT distinct ps.pokemon_id 
-FROM pokemon_stats AS ps, stats AS s
-WHERE s.identifier = %s AND ps.base_stat >= %s 
+SELECT distinct ps.pokemon_id, p.identifier, t.identifier 
+FROM pokemon_stats AS ps, stats AS s, pokemon_species AS p, pokemon_types AS pt, types AS t
+WHERE s.identifier = 'hp' AND ps.base_stat >= 80 AND ps.pokemon_id = p.id AND pt.pokemon_id = p.id AND pt.type_id = t.id 
 ORDER by ps.pokemon_id;
 
 /*	11. Given stats sum, find all ids of qualified pokemon	*/
