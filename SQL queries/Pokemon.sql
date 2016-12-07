@@ -15,9 +15,15 @@ FROM pokemon_stats AS ps, stats AS s
 WHERE ps.pokemon_id = %s AND s.id = ps.stat_id;
 
 /*	3. Given national pokedex id, find the type of pokemon	*/
-SELECT t.identifier
-FROM pokemon_types AS pt, types AS t
-WHERE pt.pokemon_id = %s AND t.id = pt.type_id;
+SELECT * FROM
+	(SELECT t.identifier||', '||tt.identifier
+	FROM pokemon_types AS pt, types AS t,
+		(SELECT t.identifier, t.id, pt.slot 
+		FROM pokemon_types AS pt, types AS t 
+		WHERE pt.pokemon_id = %s AND t.id = pt.type_id) AS tt 
+	WHERE pt.pokemon_id = %s AND t.id = type_id AND (t.id <> tt.id               OR tt.slot = 1)
+	ORDER BY t.identifier) AS p 
+LIMIT 1;
 
 /*	4. Given national pokedex id, find the generation of that pokemon	*/
 SELECT g.identifier
@@ -72,16 +78,15 @@ FROM pokemon_types AS pt, types AS t
 WHERE t.identifier = %s AND t.id = pt.type_id;
 
 /*	13. Give the id, identifier and type of the given pokemon	*/
-SELECT p.id, p.identifier
-
-/*	two types to one line	*/
-SELECT * FROM
-	(SELECT t.identifier||', '||tt.identifier
-	FROM pokemon_types AS pt, types AS t,
-		(SELECT t.identifier, t.id 
-		FROM pokemon_types AS pt, types AS t 
-		WHERE pt.pokemon_id = 1 AND t.id = pt.type_id) AS tt 
-	WHERE pt.pokemon_id = 1 AND t.id = type_id AND t.id <> tt.id
-	ORDER BY t.identifier) AS p 
-LIMIT 1;
-
+SELECT p.id, p.identifier, T
+FROM pokemon_species as p,
+(SELECT * FROM
+        (SELECT t.identifier||', '||tt.identifier
+        FROM pokemon_types AS pt, types AS t,
+                (SELECT t.identifier, t.id, pt.slot
+                FROM pokemon_types AS pt, types AS t
+                WHERE pt.pokemon_id = %s AND t.id = pt.type_id) AS tt
+        WHERE pt.pokemon_id = %s AND t.id = type_id AND (t.id <> tt.id         OR tt.slot = 1)
+        ORDER BY t.identifier) AS p
+LIMIT 1) as T
+WHERE p.id = %s;
