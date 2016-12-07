@@ -71,3 +71,14 @@ SELECT pt.pokemon_id
 FROM pokemon_types AS pt, types AS t 
 WHERE t.identifier = %s AND t.id = pt.type_id;
 
+/*	13. Give the id, identifier and type of the given pokemon	*/
+SELECT p.id, p.identifier
+
+/*	two types to one line	*/
+SELECT t.identifier||' '||tt.identifier
+FROM pokemon_types AS pt, types AS t,
+ (SELECT t.identifier, t.id 
+	FROM pokemon_types AS pt, types AS t 
+	WHERE pt.pokemon_id = 1 AND t.id = pt.type_id) as tt 
+WHERE pt.pokemon_id = 1 AND t.id = type_id AND t.id <> tt.id;
+
