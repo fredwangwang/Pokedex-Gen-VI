@@ -24,12 +24,27 @@ FROM generations AS g, pokemon_species AS ps
 WHERE ps.id = %s AND g.id = ps.generation_id;
 
 /*	Query: 5	*/
+SELECT evolves_from_species_id
+FROM pokemon_species
+WHERE id = %s;
 
 /*	Query: 6	*/
+SELECT id
+FROM  pokemon_species
+WHERE id<>%s
+AND evolution_chain_id = (SELECT evolution_chain_id
+	FROM pokemon_species
+	WHERE id=%s);
 
 /*	Query: 7	*/
+SELECT p.generation_id, r.identifier
+FROM pokemon_species as p, regions as r
+WHERE p.id=%s AND p.generation_id=r.id;
 
 /*	Query: 8	*/
+SELECT s.identifier as "To-get", t.identifier as "Method"
+FROM evolution_triggers as t, pokemon_evolution as e, pokemon_species as s
+WHERE t.id=e.evolution_trigger_id AND e.evolved_species_id=%s AND s.id=%s;
 
 /*	Query: 9	*/
 SELECT identifier
