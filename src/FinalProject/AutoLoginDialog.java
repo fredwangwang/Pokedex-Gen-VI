@@ -2,8 +2,6 @@ package FinalProject;
 
 import javax.swing.*;
 
-import sample.GuiModel;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;

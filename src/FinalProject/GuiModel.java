@@ -7,51 +7,34 @@ import java.util.Vector;
 public class GuiModel extends DefaultTableModel {
 
 	Connection db;
-	Vector<Integer> albumIDs;   // will hold album ID values corresponding to search results
+	Vector<Integer> nationalPokeID;   // will hold album ID values corresponding to search results
 	int selectedRow;            // current selected row
 
 	public GuiModel() {
-		Object[] columns = {"Artist", "Album Title", "Year"};
+		Object[] columns = {"Pokemon", "Type", "Type II"};
 		setColumnIdentifiers(columns);
 	}
 
 	public void setSelectedRow(int selectedRow) {
 		this.selectedRow = selectedRow;
 	}
-	public void removeSelectedRow() {
-		removeRow(selectedRow);
-	}
 
-	public int getAlbumID() {
+	public int getPokemonID() {
 		if (selectedRow != -1) {
-			return albumIDs.elementAt(selectedRow);
+			return nationalPokeID.elementAt(selectedRow);
 		}
 		else {
 			return -1;
 		}
 	}
 
-	public String getArtist() {
+	public String getPokemon() {
 		if (selectedRow != -1) {
 			return (String) getValueAt(selectedRow, 0);
 		}
 		else {
 			return "";
 		}
-	}
-
-	private int getArtistID(String artist) throws SQLException {
-		ResultSet result;
-		int artist_id = -1;
-		
-		String queryArtistID = "SELECT id FROM artist WHERE name = ?";
-		PreparedStatement ps_QryID = db.prepareStatement(queryArtistID);
-		ps_QryID.setString(1, artist);
-		result = ps_QryID.executeQuery();
-		if (result.next())
-			artist_id = result.getInt(1);
-		
-		return artist_id;
 	}
 	
 	public String getAlbumTitle() {
@@ -98,14 +81,14 @@ public class GuiModel extends DefaultTableModel {
 		}
 		else {
 			dataVector = new Vector<Vector<Object>>();
-			albumIDs = new Vector<>();
+			nationalPokeID = new Vector<>();
 			while (result.next()) {
 				Vector<Object> row = new Vector<>();
 				row.add(result.getString(1));
 				row.add(result.getString(2));
 				row.add(result.getString(3));
 				dataVector.add(row);
-				albumIDs.add(result.getInt(4));
+				nationalPokeID.add(result.getInt(4));
 			}
 			this.fireTableDataChanged();
 		}
@@ -171,7 +154,7 @@ public class GuiModel extends DefaultTableModel {
 						"VALUES(?,?,?)";
 		
 		PreparedStatement ps = db.prepareStatement(query);
-		ps.setInt(1, getArtistID(artist));
+		//ps.setInt(1, getArtistID(artist));
 		ps.setString(2, title);
 		ps.setInt(3, Integer.parseInt(year));
 		ps.executeUpdate();

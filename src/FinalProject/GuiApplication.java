@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package sample;
+package FinalProject;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,8 +25,6 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import FinalProject.AutoLoginDialog;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
@@ -63,7 +61,7 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         AutoLoginDialog loginDialog = new AutoLoginDialog(model);
         loginDialog.open();
 
-        frame = new JFrame("CSCI 403 Example");
+        frame = new JFrame("Pokedex");
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -72,7 +70,6 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         searchPane = new JPanel();
         searchPane.setLayout(new FlowLayout());
         searchPane.setBorder(new EtchedBorder());
-        cp.add(searchPane, BorderLayout.NORTH);
 
         searchLabel = new JLabel("Search by:");
         searchPane.add(searchLabel);
@@ -89,10 +86,11 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         searchButton = new JButton("Search");
         searchButton.addActionListener(this);
         searchPane.add(searchButton);
+        
+        cp.add(searchPane, BorderLayout.NORTH);
 
         resultsPane = new JPanel();
         resultsPane.setLayout(new FlowLayout());
-        cp.add(resultsPane, BorderLayout.CENTER);
 
         searchResultsTable = new JTable();
         searchResultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -102,6 +100,8 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         JScrollPane scroller = new JScrollPane(searchResultsTable);
         scroller.setPreferredSize(new Dimension(600, 350));
         resultsPane.add(scroller);
+        
+        cp.add(resultsPane, BorderLayout.CENTER);
 
         buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout());
@@ -158,23 +158,16 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
                 "Are you sure?",
                 "Delete Album",
                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            try {
-                model.deleteAlbum(model.getAlbumID());
-                model.removeSelectedRow();
-            } catch (SQLException e) {
-                sqlExceptionHandler(e);
-            }
+           
         }
     }
 
     private void editAlbum() {
-        GuiEditAlbumDialog dlg = new GuiEditAlbumDialog(model);
-        dlg.openForEdit(model.getAlbumID(), model.getArtist(), model.getAlbumTitle(), model.getAlbumYear());
+       
     }
 
     private void addAlbum() {
-        GuiEditAlbumDialog dlg = new GuiEditAlbumDialog(model);
-        dlg.openForInsert();
+       
     }
 
     private void addArtist() {
