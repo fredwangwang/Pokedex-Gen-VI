@@ -11,15 +11,29 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.JCheckBox;
 
 public class AdvSearch extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private PokeTableModel pktablemodel;
-	/**
-	 * Launch the application.
-	 */
+
+	// widgets 
+	private JButton okButton;
+	private JButton cancelButton;
+	private JComboBox<String> comboBox;
+
+	// data
+	private Vector<Vector> types;
+
 	public static void main(String[] args) {
 		try {
 			AdvSearch dialog = new AdvSearch(null);
@@ -29,14 +43,9 @@ public class AdvSearch extends JDialog {
 		}
 	}
 
-	/**
-	 * Create the dialog.
-	 */
 	public AdvSearch(PokeTableModel m) {
 		pktablemodel = m;
-		
 		Initialize();
-		
 	}
 
 	private void Initialize() {
@@ -48,18 +57,35 @@ public class AdvSearch extends JDialog {
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
+
+		JCheckBox chckbxType = new JCheckBox("Type: ");
+		contentPanel.add(chckbxType);
+
+		// initialize type combo box
+		try {
+			types = pktablemodel.getPokemonType();
+			comboBox = new JComboBox<String>(types.elementAt(1));
+			contentPanel.add(comboBox);
+		} 
+		catch (SQLException e1) {
+			CommonUtils.sqlExceptionHandler(e1, this);
+		}
+		catch (NullPointerException e2){
+			System.out.println("Null pointer");
+		}
+
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				okButton = new JButton("OK");
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
+				cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();
@@ -69,7 +95,7 @@ public class AdvSearch extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		
+
 		setVisible(true);
 	}
 }

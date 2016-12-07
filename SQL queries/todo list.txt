@@ -1,0 +1,25 @@
+Queries TODO:
+Note: main data is pokemon_species, we probably won¡¯t use pokemon directly because it contains mega and special forms of certain pokemon, thus introduce duplications.
+
+1.	Given national pokedex id, find the name of the pokemon (pokemon_species)
+2.	Given national pokedex id, find the stats of the pokemon (pokemon_stats & stats)
+3.	Given national pokedex id, find the type of pokemon (pokemon_types & types)
+4.	Given national pokedex id, find the generation of that pokemon (generations & pokemon_species)
+5.	Given national pokedex id, find what is the id of the pokemon it evolves from (pokemon_species @ evolves_from_species_id)
+6.	Given national pokedex id, find the id of all ancestor and descendant of that pokemon (pokemon_species @ evolution_chain_id)
+7.	Given generation id, find the region (generations & regions)
+8.	Given ancestor id and pokemon id, find all evolve conditions (pokemon_evolution)
+9.	Given generation id, find all pokemon of that generation (pokemon_species)
+10.	Given condition stats, find all ids of qualified pokemon (pokemon_stats & stats) 
+e.g. find all pokemons whose HP base stat >= 80
+11.	Given stats sum, find all ids of qualified pokemon (pokemon_stats)
+e.g. find all pokemons whose stats sum >= 600 THIS IS HARD
+12.	Given certain type, find ids of all pokemon of that type (pokemon_types & types)
+Note: some pokemon have 2 types, be careful when write query
+13.	Given Pokemon name, return [id, identifier, type] (pokemon_species & pokemon_types & types) detailed requirement see .sql file
+
+
+Certain query should be made to have formatted output: [id, identifier, type]. Duplications caused by two-type now can be handled by the program. MAKE LIFE EASIER
+
+TODO: Query which need reformat:
+5; 6; 10; 11; 12;

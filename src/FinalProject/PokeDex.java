@@ -84,6 +84,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 	public PokeDex() {
 		initialize();
+		framePokedex.setFocusable(true);
 		framePokedex.addKeyListener(this);
 	}
 
@@ -117,7 +118,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 				try {
 					poketableModel.basicSearch(searchField.getText());
 				} catch (SQLException e1) {
-					sqlExceptionHandler(e1);
+					CommonUtils.sqlExceptionHandler(e1, framePokedex);
 				}
 			}
 		});
@@ -187,12 +188,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		menuBar.add(aboutMenu);
 	}
 
-	private void sqlExceptionHandler(SQLException e) {
-		JOptionPane.showMessageDialog(framePokedex,
-				"Database error: " + e.getMessage(),
-				"Database error",
-				ERROR_MESSAGE);
-	}
+
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
@@ -214,9 +210,9 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {
-		System.out.println("keytyped");
+		System.out.println("key typed");
 		searchField.grabFocus();
-		searchField.setText(Character.toString(e.getKeyChar() ));
+		searchField.setText(Character.toString(e.getKeyChar()));
 	}
 
 

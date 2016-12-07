@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -62,24 +64,10 @@ public class PokeTableModel extends DefaultTableModel {
 		}
 	}
 
-	// TODO
-	public List<String> getPokemonType() {
-		String types;
-		if (selectedRow != -1) {
-			types =  (String)getValueAt(selectedRow, 2);
-
-			if (types.contains(",")){
-
-			}
-		}
-
-		return null;
-	}
-
 	// Queries
 	public void setTable(ResultSet res) throws SQLException{
 		int id = -1, lastid = -1;
-		
+
 		Vector<Object> row;
 
 		if (res == null) {
@@ -107,11 +95,8 @@ public class PokeTableModel extends DefaultTableModel {
 		this.fireTableDataChanged();
 	}
 
-	// TODO
 	public void basicSearch(String val) throws SQLException {
-
 		ResultSet result;
-
 		String query =
 				"SELECT pkids.id, pspecies.identifier, types.identifier " +
 						"FROM (SELECT id FROM pokemon_species WHERE identifier LIKE (?)) AS pkids, " +
@@ -122,9 +107,30 @@ public class PokeTableModel extends DefaultTableModel {
 
 		PreparedStatement ps = db.prepareStatement(query);
 		ps.setString(1, "%" + val.toLowerCase() + "%");
-
 		result =  ps.executeQuery();
 		setTable(result);
 	}
 
+	public Vector<Vector> getPokemonType() throws SQLException {
+		Vector<String> typeNames = new Vector<>();
+		Vector<Integer> typeInts = new Vector<>();
+
+		String query =
+				"SELECT id,  identifier " +
+						"FROM stats " +
+						"WHERE is_battle_only = 0";
+
+		Statement stmt = db.createStatement();
+		ResultSet result = stmt.executeQuery(query);
+		while(result.next()){
+			typeInts.add(result.getInt(1));
+			typeNames.add(result.getString(2));			
+		}
+
+		Vector<Vector> type = new Vector<>();
+		type.add(typeInts);
+		type.add(typeNames);
+		
+		return type;
+	}
 }
