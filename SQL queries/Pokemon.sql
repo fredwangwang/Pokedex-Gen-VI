@@ -31,17 +31,23 @@ FROM generations AS g, pokemon_species AS ps
 WHERE ps.id = %s AND g.id = ps.generation_id;
 
 /*	5. Given national pokedex id, find what is the id of the pokemon it evolves from	*/
-SELECT evolves_from_species_id
-FROM pokemon_species
-WHERE id = %s;
+SELECT ps.evolves_from_species_id, p.identifier, t.identifier
+FROM (SELECT evolves_from_species_id
+      FROM pokemon_species 
+      WHERE id = %s) AS ps,
+      pokemon_species AS p,
+      pokemon_types AS pt,
+      types AS t
+WHERE ps.evolves_from_species_id = p.id AND p.id = pt.pokemon_id AND pt.type_id = t.id;
 
 /*	6. Given national pokedex id, find the id of all ancestor and descendant of that pokemon	*/
-SELECT id
-FROM  pokemon_species
-WHERE id<>%s
+SELECT ps.id, ps.identifier, t.identifier
+FROM  pokemon_species AS ps, pokemon_types AS pt, types AS t
+WHERE ps.id<>%s
 AND evolution_chain_id = (SELECT evolution_chain_id
 	FROM pokemon_species
-	WHERE id=%s);
+	WHERE id=%s)
+AND ps.id = pt.pokemon_id AND pt.type_id = t.id;
 
 /*	7. Given generation id, find the region	*/
 SELECT p.generation_id, r.identifier
@@ -61,7 +67,7 @@ WHERE generation_id = %s;
 /*	10. Given condition stats, find all ids of qualified pokemon	*/
 SELECT distinct ps.pokemon_id, p.identifier, t.identifier 
 FROM pokemon_stats AS ps, stats AS s, pokemon_species AS p, pokemon_types AS pt, types AS t
-WHERE s.identifier = 'hp' AND ps.base_stat >= 80 AND ps.pokemon_id = p.id AND pt.pokemon_id = p.id AND pt.type_id = t.id 
+WHERE s.identifier = %s AND ps.base_stat >= %s AND ps.pokemon_id = p.id AND pt.pokemon_id = p.id AND pt.type_id = t.id 
 ORDER by ps.pokemon_id;
 
 /*	11. Given stats sum, find all ids of qualified pokemon	*/
@@ -88,8 +94,8 @@ FROM pokemon_species as p,
         FROM pokemon_types AS pt, types AS t,
                 (SELECT t.identifier, t.id, pt.slot
                 FROM pokemon_types AS pt, types AS t
-                WHERE pt.pokemon_id = 3 AND t.id = pt.type_id) AS tt
-        WHERE pt.pokemon_id = 3 AND t.id = type_id AND (t.id <> tt.id         OR tt.slot = 1)
+                WHERE pt.pokemon_id = %s AND t.id = pt.type_id) AS tt
+        WHERE pt.pokemon_id = %s AND t.id = type_id AND (t.id <> tt.id         OR tt.slot = 1)
         ORDER BY t.identifier) AS p
 LIMIT 1) as T
-WHERE p.id = 3;
+WHERE p.id = %s;
