@@ -18,10 +18,10 @@ WHERE ps.pokemon_id = %s AND s.id = ps.stat_id;
 SELECT * FROM
 	(SELECT t.identifier||', '||tt.identifier
 	FROM pokemon_types AS pt, types AS t,
-		(SELECT t.identifier, t.id 
+		(SELECT t.identifier, t.id, pt.slot 
 		FROM pokemon_types AS pt, types AS t 
 		WHERE pt.pokemon_id = %s AND t.id = pt.type_id) AS tt 
-	WHERE pt.pokemon_id = %s AND t.id = type_id AND t.id <> tt.id
+	WHERE pt.pokemon_id = %s AND t.id = type_id AND (t.id <> tt.id               OR tt.slot = 1)
 	ORDER BY t.identifier) AS p 
 LIMIT 1;
 
@@ -83,10 +83,10 @@ FROM pokemon_species as p,
 (SELECT * FROM
         (SELECT t.identifier||', '||tt.identifier
         FROM pokemon_types AS pt, types AS t,
-                (SELECT t.identifier, t.id
+                (SELECT t.identifier, t.id, pt.slot
                 FROM pokemon_types AS pt, types AS t
                 WHERE pt.pokemon_id = %s AND t.id = pt.type_id) AS tt
-        WHERE pt.pokemon_id = %s AND t.id = type_id AND t.id <> tt.id
+        WHERE pt.pokemon_id = %s AND t.id = type_id AND (t.id <> tt.id         OR tt.slot = 1)
         ORDER BY t.identifier) AS p
 LIMIT 1) as T
 WHERE p.id = %s;
