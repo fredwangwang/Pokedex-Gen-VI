@@ -1,3 +1,4 @@
 # put your ideas here... which we will implement
 
 1.	search all <type> type pokemons, like all 'normal' type
+2.	search all pokemon that have a third evalution with two types.
