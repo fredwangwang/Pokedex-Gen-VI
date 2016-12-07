@@ -51,6 +51,7 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 	private JTextField searchField;
 
 	private PokeTableModel pktbModel;
+	private AutoLoginDialog login;
 
 	// Widgets
 	private JMenuBar menuBar;
@@ -63,6 +64,7 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 	private JButton detailButton;
 	private JButton advSearchButton;
 	private JButton quitButton;
+	private JTable table;
 
 
 	public static void main(String[] args) {
@@ -84,6 +86,9 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 
 	private void initialize() {
 		pktbModel = new PokeTableModel();
+
+		login = new AutoLoginDialog(pktbModel);
+		login.open();
 
 		frmPokedex = new JFrame();
 		frmPokedex.setIconImage(Toolkit.getDefaultToolkit().getImage("data\\icon\\dex.png"));
@@ -145,8 +150,15 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 		JScrollPane scrollPane = new JScrollPane();
 		frmPokedex.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
-		JTable table = new JTable();
-		table.setColumnSelectionAllowed(true);
+		table = new JTable(){
+			@Override
+			public boolean isCellEditable(int row, int col) {
+				return false;
+			}
+		};
+
+		// hard coded value, which is the height of the icons used
+		table.setRowHeight(30);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(this);
 		table.setModel(pktbModel);
@@ -169,13 +181,13 @@ public class PokeDex implements ActionListener, ListSelectionListener{
 		aboutMenu = new JMenu("About");
 		menuBar.add(aboutMenu);
 	}
-	
-    private void sqlExceptionHandler(SQLException e) {
-        JOptionPane.showMessageDialog(frmPokedex,
-                "Database error: " + e.getMessage(),
-                "Database error",
-                ERROR_MESSAGE);
-    }
+
+	private void sqlExceptionHandler(SQLException e) {
+		JOptionPane.showMessageDialog(frmPokedex,
+				"Database error: " + e.getMessage(),
+				"Database error",
+				ERROR_MESSAGE);
+	}
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {

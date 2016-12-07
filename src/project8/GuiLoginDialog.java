@@ -1,4 +1,4 @@
-package FinalProject;
+package project8;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,13 +11,13 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 // may want to add a splash later
 
-public class AutoLoginDialog extends JDialog {
+public class GuiLoginDialog extends JDialog {
 	private static final String username = "huhwang";
 	private static final String passwd = "Pokemon";
 
-	PokeTableModel model;
+	GuiModel model;
 
-	public AutoLoginDialog(PokeTableModel m) {
+	public GuiLoginDialog(GuiModel m) {
 		model = m;
 	}
 

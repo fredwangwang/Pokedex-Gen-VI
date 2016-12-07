@@ -3,16 +3,27 @@ package FinalProject;
 import java.awt.Toolkit;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 import static FinalProject.PokeDex.PokemonIconDir;
 
 public class PokeTableModel extends DefaultTableModel {
+	// override to show pictures
+	@Override
+    public Class<?> getColumnClass(int column) {
+        switch (column) {
+            case 0: return ImageIcon.class;
+            default: return String.class;
+        }
+    }
+	
 	Connection db;
 	Vector<Integer> nationalPokeID;   
 	int selectedRow;           
@@ -65,7 +76,6 @@ public class PokeTableModel extends DefaultTableModel {
 		return null;
 	}
 	
-	
 	// Queries
 	public void setTable(ResultSet res) throws SQLException{
 		if (res == null) {
@@ -77,11 +87,10 @@ public class PokeTableModel extends DefaultTableModel {
 			Vector<Object> row = new Vector<>();
 			int id = res.getInt(1);
 			
-			row.add(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+id+".png"));
-			row.add(res.getString(1));
-			row.add(null);
-			
-			dataVector.add(row);
+			row.add(new ImageIcon(PokemonIconDir+id+".png"));
+			row.add(res.getString(2));
+			row.add(res.getString(3));
+			this.addRow(row);
 			nationalPokeID.add(id);
 		}
 		this.fireTableDataChanged();
@@ -93,11 +102,18 @@ public class PokeTableModel extends DefaultTableModel {
 		ResultSet result;
 		
 		String query =
-				"SELECT ar.name, al.title, al.year, al.id " +
-						"FROM artist AS ar, album AS al " +
-						"WHERE lower(al.title) LIKE lower(?) " +
-						"AND ar.id = al.artist_id " +
-						"ORDER BY ar.name, al.year, al.title";
+				"SELECT pkids.id, pspecies.identifier, types.identifier " +
+				 "FROM (SELECT id FROM pokemon_species WHERE identifier LIKE (?)) AS pkids, " +
+								"pokemon_species AS pspecies, " +
+								"pokemon_types AS ptype, " +
+								"types " +
+				"WHERE pkids.id = pspecies.id AND pkids.id = ptype.pokemon_id AND ptype.type_id = types.id";
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		ps.setString(1, "%" + val.toLowerCase() + "%");
+		
+		result =  ps.executeQuery();
+		setTable(result);
 	}
 	
 }
