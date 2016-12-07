@@ -1,7 +1,8 @@
 /* %s is where the string insert will be */
 /* ie in Java => "... WHERE id =" + %s */ 
 
-
+/* Formalized query: output [id, identifier, type] for original queries which return id
+/* Note: For those have two types, concate them into single string. e.g. 'Normal, Water'
 
 /*	Query: 1	*/
 SELECT identifier 
