@@ -65,17 +65,20 @@ WHERE s.identifier = %s AND ps.base_stat >= %s
 ORDER by ps.pokemon_id;
 
 /*	11. Given stats sum, find all ids of qualified pokemon	*/
-SELECT p.pokemon_id 
+SELECT p.pokemon_id, ps.identifier, t.identifier 
 FROM (select pokemon_id, sum(base_stat) 
 	FROM pokemon_stats 
 	GROUP BY pokemon_id 
-	ORDER BY pokemon_id asc) AS p 
-WHERE sum >= %s;
+	ORDER BY pokemon_id asc) AS p,
+	pokemon_species AS ps,
+	types AS t,
+	pokemon_types AS pt
+WHERE sum >= %s AND ps.id = p.pokemon_id AND pt.pokemon_id = p.pokemon_id AND pt.type_id = t.id;
 
 /*	12. Given certain type, find ids of all pokemon of that type	*/
-SELECT pt.pokemon_id 
-FROM pokemon_types AS pt, types AS t 
-WHERE t.identifier = %s AND t.id = pt.type_id;
+SELECT pt.pokemon_id, p.identifier, t.identifier 
+FROM pokemon_types AS pt, types AS t, pokemon_species AS p 
+WHERE t.identifier = %s AND t.id = pt.type_id AND pt.pokemon_id = p.id;
 
 /*	13. Give the id, identifier and type of the given pokemon	*/
 SELECT p.id, p.identifier, T
