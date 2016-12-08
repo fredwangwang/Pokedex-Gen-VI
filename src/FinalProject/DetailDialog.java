@@ -233,7 +233,7 @@ public class DetailDialog extends JDialog {
 					basicInfo.add(panel);
 					panel.setLayout(new BorderLayout(0, 0));
 					{
-						JLabel label = new JLabel("Base Happness");
+						JLabel label = new JLabel("Base Happiness");
 						panel.add(label, BorderLayout.WEST);
 					}
 					{

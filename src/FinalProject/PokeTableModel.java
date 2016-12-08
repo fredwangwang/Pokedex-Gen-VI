@@ -60,6 +60,7 @@ public class PokeTableModel extends DefaultTableModel {
 
 		for (Object[] row : rows)
 			this.addRow(row);
+		fireTableDataChanged();
 	}
 
 	public void nameSearch(String val) throws SQLException {
