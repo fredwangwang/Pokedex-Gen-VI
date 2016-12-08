@@ -20,7 +20,6 @@ public class PokeTableModel extends DefaultTableModel {
 	}	
 
 	private Connection db;
-	private Vector<Integer> nationalPokeID;   
 	private int selectedRow;     
 	private int SelectedPokemonID;
 	private Object[] columns = {"ID", "Pic", "Name", "Type(s)"};
@@ -41,7 +40,7 @@ public class PokeTableModel extends DefaultTableModel {
 
 	public int getSelectedPokemonID() {
 		if (selectedRow != -1) 
-			SelectedPokemonID =  nationalPokeID.elementAt(selectedRow);
+			SelectedPokemonID =  (int) this.getValueAt(selectedRow, 0);
 		else 
 			SelectedPokemonID =  0;
 		return SelectedPokemonID;
@@ -56,35 +55,15 @@ public class PokeTableModel extends DefaultTableModel {
 	}
 
 	// Queries
-	public void setTable(ResultSet res) throws SQLException{
-		int id = -1, lastid = -1;
-		Vector<Object> row;
-
+	public void setTable(Vector<Object[]> rows) throws SQLException{
 		this.dataVector = new Vector<Vector<Object>>();
-		nationalPokeID = new Vector<>();
-		while (res.next()){
-			id = res.getInt(1);
-			// Means same pokemon with different type
-			if (id != lastid){
-				row = new Vector<>();
-				row.add(id);
-				row.add(new ImageIcon(PokemonIconDir+id+".png"));
-				row.add(CommonUtils.capitalize(res.getString(2)));
-				row.add(CommonUtils.capitalize(res.getString(3)));
-				//this.fireTableRowsInserted(rowcount, ++rowcount);
-				this.addRow(row);
-				nationalPokeID.add(id);
-				lastid = id;
-			}
-			else {
-				String types = (String) this.getValueAt(this.getRowCount() - 1, 3) + ", " + CommonUtils.capitalize(res.getString(3));
-				this.setValueAt(types, this.getRowCount() - 1 , 3);
-			}
-		}
+
+		for (Object[] row : rows)
+			this.addRow(row);
 	}
 
 	public void nameSearch(String val) throws SQLException {
-		ResultSet result;
+		ResultSet res;
 		String query =
 				"SELECT pkids.id, pspecies.identifier, types.identifier " +
 						"FROM (SELECT id FROM pokemon_species WHERE identifier LIKE (?)) AS pkids, " +
@@ -95,8 +74,32 @@ public class PokeTableModel extends DefaultTableModel {
 
 		PreparedStatement ps = db.prepareStatement(query);
 		ps.setString(1, "%" + val.toLowerCase() + "%");
-		result =  ps.executeQuery();
-		setTable(result);
+		res =  ps.executeQuery();
+
+		int id = -1, lastid = -1;
+		Vector<Object[]> rows = new Vector<>();
+		Object rowData[] = new Object[4];
+
+		while (res.next()){
+			id = res.getInt(1);
+			// Means same pokemon with different type
+			if (id != lastid){
+				rowData = new Object[4];
+				rowData[0] = id;
+				rowData[1] = new ImageIcon(PokemonIconDir+id+".png");
+				rowData[2] = CommonUtils.capitalize(res.getString(2));
+				rowData[3] = CommonUtils.capitalize(res.getString(3));
+				rows.add(rowData);
+				lastid = id;
+			}
+			else {
+				String types = (rows.lastElement()[3]) + ", " + CommonUtils.capitalize(res.getString(3));
+				rowData[3] = types;
+				rows.set(rows.size()-1, rowData);
+			}
+		}
+
+		setTable(rows);
 	}
 
 	public Vector<Vector> getPokemonStatus() throws SQLException {
@@ -279,9 +282,24 @@ public class PokeTableModel extends DefaultTableModel {
 		return stats;
 	}
 
-	// add query 5 here.
-	// add query 6 here.
-	// add query 10 here
-	// add query 11 here
-	// add query 12 here.
+	// TODO
+	public void getSelectedPokemonAncestor() {
+		// query(5), just leave result here, I integrate it into GUI
+	}
+	
+	public void getSelectedPokemonEvolvChain() {
+		// query(6), just leave result here, I integrate it into GUI
+	}
+	
+	public void getQualifiedPokemonBasedStatus() {
+		// query(10), just leave result here, I integrate it into GUI
+	}
+	
+	public void getQualifiedPokemonStatusSum() {
+		// query(11), just leave result here, I integrate it into GUI
+	}
+	
+	public void getQualifiedPokemonBasedType() {
+		// query(12), just leave result here, I integrate it into GUI
+	}
 }

@@ -24,6 +24,11 @@ import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.JCheckBox;
 import javax.swing.JScrollBar;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import javax.swing.JTextField;
+import javax.swing.JLabel;
 
 public class AdvSearch extends JDialog {
 
@@ -37,11 +42,20 @@ public class AdvSearch extends JDialog {
 
 	// data
 	private Vector<Vector> types;
-	private JCheckBox chckbxNewCheckBox;
 	private JPanel panel;
 	private JButton btnNewButton;
 	private JSeparator separator_1;
 	private JButton btnNewButton_1;
+	private JPanel statsPanel;
+	private JTextField textField;
+	private JLabel label;
+	private JLabel label_1;
+	private JCheckBox chckbxSum;
+	private JCheckBox chckbxStats;
+	private JTextField textField_1;
+	private JPanel panel_1;
+	private JPanel panel_2;
+	private int checkBoxCounter;
 
 	public static void main(String[] args) {
 		try {
@@ -54,6 +68,7 @@ public class AdvSearch extends JDialog {
 
 	public AdvSearch(PokeTableModel m) {
 		pktablemodel = m;
+		checkBoxCounter = 0;
 		Initialize();
 	}
 
@@ -63,39 +78,91 @@ public class AdvSearch extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-
-		JCheckBox chckbxType = new JCheckBox("Type: ");
-		contentPanel.add(chckbxType);
-
-		// initialize type combo box
-
-		try {
-			// debug only
-			if (pktablemodel == null){
-				pktablemodel = new PokeTableModel();
-				pktablemodel.login("huhwang", "Pokemon");
+		getContentPane().add(contentPanel, BorderLayout.NORTH);
+		{
+			// initialize type combo box
+			try {
+				// debug only
+				if (pktablemodel == null){
+					pktablemodel = new PokeTableModel();
+					pktablemodel.login("huhwang", "Pokemon");
+				}
+				types = pktablemodel.getPokemonStatus();
+			} 
+			catch (SQLException e1) {
+				CommonUtils.sqlExceptionHandler(e1, this);
 			}
-			types = pktablemodel.getPokemonStatus();
-			comboBox = new JComboBox<String>(types.elementAt(1));
-			comboBox.setSelectedIndex(0);
-			contentPanel.add(comboBox);
-		} 
-		catch (SQLException e1) {
-			CommonUtils.sqlExceptionHandler(e1, this);
-		}
-		catch (NullPointerException e2){
-			System.out.println("Null pointer");
-		}
-		catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			catch (NullPointerException e2){
+				System.out.println("Null pointer");
+			}
+			catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 
-		chckbxNewCheckBox = new JCheckBox("New 111box");
-		contentPanel.add(chckbxNewCheckBox);
+			statsPanel = new JPanel();
+			statsPanel.setBorder(new TitledBorder(null, "Status", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			contentPanel.add(statsPanel);
+			statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
+			{
+				panel_1 = new JPanel();
+				FlowLayout flowLayout = (FlowLayout) panel_1.getLayout();
+				flowLayout.setAlignment(FlowLayout.LEFT);
+				statsPanel.add(panel_1);
+
+				chckbxStats = new JCheckBox("Status: ");
+				chckbxStats.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (chckbxStats.isSelected())
+							checkBoxCounter++;
+						else 
+							checkBoxCounter--;
+					}
+				});
+				panel_1.add(chckbxStats);
+				comboBox = new JComboBox<String>(types.elementAt(1));
+				panel_1.add(comboBox);
+				comboBox.setSelectedIndex(0);
+				{
+					label = new JLabel(">");
+					panel_1.add(label);
+				}
+				{
+					textField = new JTextField();
+					panel_1.add(textField);
+					textField.setColumns(3);
+				}
+			}
+			{
+				panel_2 = new JPanel();
+				FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
+				flowLayout.setAlignment(FlowLayout.LEFT);
+				statsPanel.add(panel_2);
+				{
+					chckbxSum = new JCheckBox("Sum > ");
+					chckbxSum.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							if (chckbxSum.isSelected())
+								checkBoxCounter++;
+							else 
+								checkBoxCounter--;
+						}
+					});
+					panel_2.add(chckbxSum);
+				}
+				{
+					textField_1 = new JTextField();
+					panel_2.add(textField_1);
+					textField_1.setColumns(3);
+				}
+			}
+			{
+				label_1 = new JLabel("");
+				statsPanel.add(label_1);
+			}
+		}
 
 		{
 			JPanel buttonPane = new JPanel();
@@ -103,6 +170,16 @@ public class AdvSearch extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (checkBoxCounter == 0){
+							return;
+						}
+						// TODO
+						// check each chckbx and do the query.
+						
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -118,21 +195,7 @@ public class AdvSearch extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		//		{
-		//			panel = new JPanel();
-		//			panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-		//			addAButton("Button 1", panel);
-		//			addAButton("Button 2", panel);
-		//			addAButton("Button 3", panel);
-		//			addAButton("Long-Named Button 4", panel);
-		//			addAButton("5", panel);
-		//			getContentPane().add(panel, BorderLayout.NORTH);
-		//
-		//		}
-
-
 		setVisible(true);
-
 	}
 
 	private void addAButton(String text, Container container) {
