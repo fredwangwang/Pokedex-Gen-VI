@@ -46,13 +46,15 @@ public class DetailDialog extends JDialog {
 
 
 	//
-	public DetailDialog() {
+
+	public DetailDialog() throws SQLException {
+
 		PokemonID = 0;
 		Initialize();
 	}
 
 	// Given selected row id, the icon will display the sprite of the pokemon selected
-	public DetailDialog(PokeTableModel model){
+	public DetailDialog(PokeTableModel model) throws SQLException{
 		this.model = model;
 		PokemonID = model.getSelectedPokemonID();
 		PokemonName = model.getSelectedPokemonName();
@@ -60,8 +62,10 @@ public class DetailDialog extends JDialog {
 		Initialize();
 	}
 
-	private void Initialize() {
-		setTitle("Detail Info");
+
+	private void Initialize() throws SQLException {
+
+setTitle("Detail Info");
 
 		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+PokemonID+".png"));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
