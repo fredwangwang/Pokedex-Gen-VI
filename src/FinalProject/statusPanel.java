@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.swing.JPanel;
 
 
+// DONE
 public class statusPanel extends JPanel {
 	private static final int START_X = 10;
 	private static final int START_Y = 20;
@@ -44,8 +45,6 @@ public class statusPanel extends JPanel {
 			statTotal += stats.get(i);
 			CreateStatsBar(statsName,stats,statsColor, i,g );
 		}
-		System.out.println(statTotal);
-
 		g.drawString("Total: "+ statTotal, START_X, START_Y +  6*OFFSET_Y);
 	}
 
@@ -55,6 +54,5 @@ public class statusPanel extends JPanel {
 		g.fillRect(START_X,  START_Y +  i*OFFSET_Y, width, 10);
 		g.setColor(Color.BLACK);
 		g.drawString(statsName[i] + stats.get(i), START_X, START_Y +  i*OFFSET_Y);
-		
 	}
 }

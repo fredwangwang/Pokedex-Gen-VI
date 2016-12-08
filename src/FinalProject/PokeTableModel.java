@@ -58,12 +58,8 @@ public class PokeTableModel extends DefaultTableModel {
 	// Queries
 	public void setTable(ResultSet res) throws SQLException{
 		int id = -1, lastid = -1;
-		int rowcount = 0;
 		Vector<Object> row;
 
-		if (res == null) {
-			throw new RuntimeException("Invalid search result");
-		}
 		this.dataVector = new Vector<Vector<Object>>();
 		nationalPokeID = new Vector<>();
 		while (res.next()){
@@ -81,11 +77,10 @@ public class PokeTableModel extends DefaultTableModel {
 				lastid = id;
 			}
 			else {
-				String types = (String) this.getValueAt(this.getRowCount() - 1, 2) + ", " + CommonUtils.capitalize(res.getString(3));
-				this.setValueAt(types, this.getRowCount() - 1 , 2);
+				String types = (String) this.getValueAt(this.getRowCount() - 1, 3) + ", " + CommonUtils.capitalize(res.getString(3));
+				this.setValueAt(types, this.getRowCount() - 1 , 3);
 			}
 		}
-		this.fireTableDataChanged();
 	}
 
 	public void nameSearch(String val) throws SQLException {

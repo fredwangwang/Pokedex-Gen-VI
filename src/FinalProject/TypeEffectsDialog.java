@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+// UNDER DEVELOP, may be discard
 public class TypeEffectsDialog extends JDialog {
 	private JTable table;
 

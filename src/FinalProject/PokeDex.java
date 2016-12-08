@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import sun.awt.image.ImageCache.PixelsKey;
 
 import java.awt.Toolkit;
@@ -35,6 +36,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
+import com.sun.webkit.dom.KeyboardEventImpl;
+
 import javax.swing.JScrollBar;
 import javax.swing.JEditorPane;
 import java.awt.Component;
@@ -89,8 +93,6 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 	public PokeDex() {
 		initialize();
-		framePokedex.setFocusable(true);
-		framePokedex.addKeyListener(this);
 	}
 
 	private void initialize() {
@@ -115,6 +117,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 		searchField = new JTextField();
 		SearchPanel.add(searchField);
+		searchField.addKeyListener(this);
 		searchField.setColumns(15);
 
 		searchButton = new JButton("Search");
@@ -138,7 +141,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		detailButton.setEnabled(false);
 		detailButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					DetailDialog detail = new DetailDialog(poketableModel);
+				DetailDialog detail = new DetailDialog(poketableModel);
 			}
 		});
 		ControlPanel.add(detailButton);
@@ -168,10 +171,9 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 				return false;
 			}
 		};
-
-        sorter = new TableRowSorter<DefaultTableModel>();
-        sorter.setModel(poketableModel);
-        table.setRowSorter(sorter);
+		sorter = new TableRowSorter<DefaultTableModel>();
+		sorter.setModel(poketableModel);
+		table.setRowSorter(sorter);
 		// hard coded value, which is the height of the icons used
 		table.setRowHeight(30);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -179,7 +181,8 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		table.setModel(poketableModel);
 		table.getColumnModel().getColumn(0).setMinWidth(5);
 		table.getColumnModel().getColumn(0).setPreferredWidth(5);
-		
+		table.addKeyListener(this);
+
 		scrollPane.setViewportView(table);
 
 		menuBar = new JMenuBar();
@@ -198,7 +201,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 		aboutMenu = new JMenu("About");
 		menuBar.add(aboutMenu);
-		
+
 		try {
 			poketableModel.nameSearch(searchField.getText().trim());
 		} catch (SQLException e1) {
@@ -214,7 +217,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 			detailButton.setEnabled(false);
 		else
 			detailButton.setEnabled(true);
-		
+
 		poketableModel.setSelectedRow(table.getSelectedRow());
 	}
 
@@ -223,18 +226,29 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		// TODO Auto-generated method stub
 	}
 
-	
+
 	// KeyListener
 	@Override
 	public void keyPressed(KeyEvent e) {
-		//System.out.println("keypressed");
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			try {
+				poketableModel.nameSearch(searchField.getText().trim());
+			} catch (SQLException e1) {
+				CommonUtils.sqlExceptionHandler(e1, framePokedex);
+			}
+			searchField.setText("");
+		}
 	}
 	@Override
-	public void keyReleased(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+	}
 	@Override
 	public void keyTyped(KeyEvent e) {
-		System.out.println("key typed");
-		searchField.grabFocus();
-		searchField.setText(Character.toString(e.getKeyChar()));
+		if (!searchField.hasFocus()){
+			searchField.grabFocus();
+			searchField.setText(Character.toString(e.getKeyChar()));
+		}
 	}
+
+	// helper function to do 
 }

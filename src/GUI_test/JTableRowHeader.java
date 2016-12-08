@@ -8,7 +8,6 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 public class JTableRowHeader {
-
     private JFrame frame = new JFrame("JTable RowHeader");
     private JScrollPane scrollPane;
     private JTable table;
