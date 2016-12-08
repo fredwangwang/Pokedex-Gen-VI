@@ -270,6 +270,7 @@ public class PokeTableModel extends DefaultTableModel {
 	
 	public Vector<Integer> getSelectedPokemonStatus(int id){
 		// TODO do query
+		
 		//  (modify query 2)
 		return null;
 	}
