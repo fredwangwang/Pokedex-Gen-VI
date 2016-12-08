@@ -47,7 +47,6 @@ public class DetailDialog extends JDialog {
 
 	//
 	public DetailDialog() {
-		setTitle("Detail Info");
 		PokemonID = 0;
 		Initialize();
 	}
@@ -62,6 +61,8 @@ public class DetailDialog extends JDialog {
 	}
 
 	private void Initialize() {
+		setTitle("Detail Info");
+
 		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+PokemonID+".png"));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 319, 286);
