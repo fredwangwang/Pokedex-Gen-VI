@@ -136,14 +136,16 @@ public class PokeTableModel extends DefaultTableModel {
 		return type;
 	}
 
-	// TODO 
 	public String getSelectedPokemoneggGroup(int id) throws SQLException {
 		String egggroup = "";
 		ResultSet result;
-		String query =
-				"";
+		String query = 
+				"SELECT e.identifier "
+				+ "FROM egg_groups AS e, pokemon_species AS ps, pokemon_egg_groups AS peg "
+				+ "WHERE ps.id =" + id + " AND ps.id = peg.species_id AND peg.egg_group_id = e.id";
+		
 		PreparedStatement ps = db.prepareStatement(query);
-		ps.setInt(1, id);
+		//ps.setInt(1, id); //What does this do? It stop throwing an error and works after I commented it out - Khanh
 		result =  ps.executeQuery();
 
 		result.next();
@@ -156,35 +158,86 @@ public class PokeTableModel extends DefaultTableModel {
 		return egggroup;
 	}
 
-	public String getSelectedPokemonCaptureRate(int id){
-		// TODO do query
-		// query returns int, make it a string to return (pokemonspecies)
+	public String getSelectedPokemonCaptureRate(int id) throws SQLException{
+		String captureRate = "";
+		ResultSet result;
+		String query = 
+				"SELECT capture_rate FROM pokemon_species "
+				+ "WHERE id = " + id;
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+		result.next();
+		captureRate = result.getString(1);
 
-		return "";
+		return captureRate;
 	}
 
-	public String getSelectedPokemonGenderRatio(int id){
-		// TODO do query
-		// query returns int, make it a string to return (pokemonspecies)
-		return "";
+	public String getSelectedPokemonGenderRatio(int id) throws SQLException{
+		ResultSet result;
+		String query = 
+				"SELECT gender_rate FROM pokemon_species "
+				+ "WHERE id = " + id;
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+		result.next();
+		double female = Double.parseDouble(result.getString(1));
+		if ((int)female == -1) { 
+			return "genderless";
+		}
+		female *= 12.5;
+		double male = 100.0 - female;
+		return female + "% female, " + male + "% male";
 	}
 
-	public String getSelectedPokemonBaseExp(int id){
+	public String getSelectedPokemonBaseExp(int id) throws SQLException{
 		// TODO do query
 		// query returns int, make it a string to return (pokemonspecies)
-		return "";
+		String base = "";
+		ResultSet result;
+		String query = 
+				"SELECT base_experience FROM pokemon "
+				+ "WHERE id = " + id;
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+		result.next();
+		base = result.getString(1);
+
+		return base;
 	}
 
-	public String getSelectedPokemonBaseHappness(int id){
-		// TODO do query
-		// query returns int, make it a string to return (pokemonspecies)
-		return "";
+	public String getSelectedPokemonBaseHappness(int id) throws SQLException{
+		String baseHappiness = "";
+		ResultSet result;
+		String query = 
+				"SELECT base_happiness FROM pokemon_species "
+				+ "WHERE id = " + id;
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+		result.next();
+		baseHappiness = result.getString(1);
+
+		return baseHappiness;
 	}
 
-	public String getSelectedPokemonGeneration(int id){
-		// TODO do query
-		//  (query 4)
-		return "";
+	public String getSelectedPokemonGeneration(int id) throws SQLException{
+		// Might work, might not, who knows
+		String generation;
+		ResultSet result;
+		String query = 
+				"SELECT g.identifier "
+				+ "FROM pokemon_types AS pt, types AS t "
+				+ "WHERE pt.pokemon_id = " + id + " AND g.id = ps.generation_id";
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+		result.next();
+		generation = result.getString(1);
+		
+		return generation;
 	}
 
 	public String getSelectedPokemonRegion(int id){
