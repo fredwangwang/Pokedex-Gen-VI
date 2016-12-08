@@ -29,9 +29,8 @@ public class statusPanel extends JPanel {
 	private void initialize(){
 		// Set the size and do the query
 		setPreferredSize(new Dimension(250, 200));
-
 		try {
-			stats = model.getSelectedPokemonStatus(1);
+			stats = model.getSelectedPokemonStatus();
 		} catch (SQLException e) {
 			CommonUtils.sqlExceptionHandler(e, this);
 		}
@@ -40,11 +39,14 @@ public class statusPanel extends JPanel {
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-
+		int statTotal = 0;
 		for (int i=0;i< statsName.length ;i++){
+			statTotal += stats.get(i);
 			CreateStatsBar(statsName,stats,statsColor, i,g );
-
 		}
+		System.out.println(statTotal);
+
+		g.drawString("Total: "+ statTotal, START_X, START_Y +  6*OFFSET_Y);
 	}
 
 	private void CreateStatsBar(String[] statsName, Vector<Integer> stats, Color[] c, int i, Graphics g) {
@@ -53,6 +55,6 @@ public class statusPanel extends JPanel {
 		g.fillRect(START_X,  START_Y +  i*OFFSET_Y, width, 10);
 		g.setColor(Color.BLACK);
 		g.drawString(statsName[i] + stats.get(i), START_X, START_Y +  i*OFFSET_Y);
-
+		
 	}
 }

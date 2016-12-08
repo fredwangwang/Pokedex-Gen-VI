@@ -1,15 +1,7 @@
 package FinalProject;
 
-import java.awt.Toolkit;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.sql.*;
+import java.util.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
@@ -21,56 +13,52 @@ public class PokeTableModel extends DefaultTableModel {
 	@Override
 	public Class<?> getColumnClass(int column) {
 		switch (column) {
-		case 0: return ImageIcon.class;
+		case 0: return Integer.class;
+		case 1: return ImageIcon.class;
 		default: return String.class;
 		}
-	}
+	}	
 
-	Connection db;
-	Vector<Integer> nationalPokeID;   
-	int selectedRow;     
-	int SelectedPokemonID;
+	private Connection db;
+	private Vector<Integer> nationalPokeID;   
+	private int selectedRow;     
+	private int SelectedPokemonID;
+	private Object[] columns = {"ID", "Pic", "Name", "Type(s)"};
 
 	public PokeTableModel() {
-		Object[] columns = {"Pic", "Name", "Type(s)"};
 		this.setColumnIdentifiers(columns);
 	}
 
 	public void login(String username, String password) throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		String connectString = "jdbc:postgresql://flowers.mines.edu/csci403";
-
 		db = DriverManager.getConnection(connectString, username, password);
 	}
 
 	public void setSelectedRow(int selectedRow) {
 		this.selectedRow = selectedRow;
-		
 	}
 
 	public int getSelectedPokemonID() {
-		if (selectedRow != -1) {
-			if (nationalPokeID.size() > SelectedPokemonID)
-				SelectedPokemonID =  nationalPokeID.elementAt(selectedRow);
-		}
-		else {
+		if (selectedRow != -1) 
+			SelectedPokemonID =  nationalPokeID.elementAt(selectedRow);
+		else 
 			SelectedPokemonID =  0;
-		};
 		return SelectedPokemonID;
 	}
 
 	public String getSelectedPokemonName() {
-		return (String) getValueAt(selectedRow, 1);
+		return (String) getValueAt(selectedRow, 2);
 	}
 
 	public String getSelectedPokemonType() {
-		return (String) getValueAt(selectedRow, 2);
+		return (String) getValueAt(selectedRow, 3);
 	}
 
 	// Queries
 	public void setTable(ResultSet res) throws SQLException{
 		int id = -1, lastid = -1;
-
+		int rowcount = 0;
 		Vector<Object> row;
 
 		if (res == null) {
@@ -83,9 +71,11 @@ public class PokeTableModel extends DefaultTableModel {
 			// Means same pokemon with different type
 			if (id != lastid){
 				row = new Vector<>();
+				row.add(id);
 				row.add(new ImageIcon(PokemonIconDir+id+".png"));
 				row.add(CommonUtils.capitalize(res.getString(2)));
 				row.add(CommonUtils.capitalize(res.getString(3)));
+				//this.fireTableRowsInserted(rowcount, ++rowcount);
 				this.addRow(row);
 				nationalPokeID.add(id);
 				lastid = id;
@@ -137,18 +127,19 @@ public class PokeTableModel extends DefaultTableModel {
 		return type;
 	}
 
-	public String getSelectedPokemoneggGroup(int id) throws SQLException {
+	public String getSelectedPokemoneggGroup() throws SQLException {
+		int id = getSelectedPokemonID();
 		String egggroup = "";
 		ResultSet result;
 
 		String query = 
 				"SELECT e.identifier "
-				+ "FROM egg_groups AS e, pokemon_species AS ps, pokemon_egg_groups AS peg "
-				+ "WHERE ps.id = (?) AND ps.id = peg.species_id AND peg.egg_group_id = e.id";
-		
+						+ "FROM egg_groups AS e, pokemon_species AS ps, pokemon_egg_groups AS peg "
+						+ "WHERE ps.id = (?) AND ps.id = peg.species_id AND peg.egg_group_id = e.id";
+
 		PreparedStatement ps = db.prepareStatement(query);
 		ps.setInt(1, id); //What does this do? It stop throwing an error and works after I commented it out - Khanh
-						// This is a prepared statement substitution. Followed the style of CPW. - Huan
+		// This is a prepared statement substitution. Followed the style of CPW. - Huan
 		result =  ps.executeQuery();
 
 		result.next();
@@ -161,13 +152,14 @@ public class PokeTableModel extends DefaultTableModel {
 		return egggroup;
 	}
 
-	public String getSelectedPokemonCaptureRate(int id) throws SQLException{
+	public String getSelectedPokemonCaptureRate() throws SQLException{
+		int id = getSelectedPokemonID();
 		String captureRate = "";
 		ResultSet result;
 		String query = 
 				"SELECT capture_rate FROM pokemon_species "
-				+ "WHERE id = " + id;
-		
+						+ "WHERE id = " + id;
+
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 		result.next();
@@ -176,12 +168,13 @@ public class PokeTableModel extends DefaultTableModel {
 		return captureRate;
 	}
 
-	public String getSelectedPokemonGenderRatio(int id) throws SQLException{
+	public String getSelectedPokemonGenderRatio() throws SQLException{
+		int id = getSelectedPokemonID();
 		ResultSet result;
 		String query = 
 				"SELECT gender_rate FROM pokemon_species "
-				+ "WHERE id = " + id;
-		
+						+ "WHERE id = " + id;
+
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 		result.next();
@@ -194,14 +187,15 @@ public class PokeTableModel extends DefaultTableModel {
 		return male + "% male, " + female + "% female";
 	}
 
-	public String getSelectedPokemonBaseExp(int id) throws SQLException{
+	public String getSelectedPokemonBaseExp() throws SQLException{
 		// query returns int, make it a string to return (pokemonspecies)
+		int id = getSelectedPokemonID();
 		String base = "";
 		ResultSet result;
 		String query = 
 				"SELECT base_experience FROM pokemon "
-				+ "WHERE id = " + id;
-		
+						+ "WHERE id = " + id;
+
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 		result.next();
@@ -210,13 +204,14 @@ public class PokeTableModel extends DefaultTableModel {
 		return base;
 	}
 
-	public String getSelectedPokemonBaseHappness(int id) throws SQLException{
+	public String getSelectedPokemonBaseHappness() throws SQLException{
+		int id = getSelectedPokemonID();
 		String baseHappiness = "";
 		ResultSet result;
 		String query = 
 				"SELECT base_happiness FROM pokemon_species "
-				+ "WHERE id = " + id;
-		
+						+ "WHERE id = " + id;
+
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 		result.next();
@@ -225,69 +220,70 @@ public class PokeTableModel extends DefaultTableModel {
 		return baseHappiness;
 	}
 
-	public String getSelectedPokemonGeneration(int id) throws SQLException{
+	public String getSelectedPokemonGeneration() throws SQLException{
 		// Might work, might not, who knows
+		int id = getSelectedPokemonID();
 		String generation;
 		ResultSet result;
 		String query = 
 				"SELECT g.identifier "
-				+ "FROM pokemon_types AS pt, types AS t "
-				+ "WHERE pt.pokemon_id = " + id + " AND g.id = ps.generation_id";
-		
+						+ "FROM pokemon_types AS pt, types AS t "
+						+ "WHERE pt.pokemon_id = " + id + " AND g.id = ps.generation_id";
+
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 		result.next();
 		generation = result.getString(1);
-		
+
 		return generation;
 	}
 
-	public String getSelectedPokemonRegion(int id) throws SQLException{
+	public String getSelectedPokemonRegion() throws SQLException{
 		//NOTE: This will return the region id, name, and generation
 		// will need to be changed if that is not what you want
+		int id = getSelectedPokemonID();
 		String gen;
 		String region;
 		ResultSet result;
 		String query1 = 
 				"SELECT g.identifier"
-				+ "FROM generations AS g, pokemon_species AS ps"
-				+ "WHERE ps.id = " + id + " AND g.id = ps.generation_id";
-		
+						+ "FROM generations AS g, pokemon_species AS ps"
+						+ "WHERE ps.id = " + id + " AND g.id = ps.generation_id";
+
 		PreparedStatement ps1 = db.prepareStatement(query1);
 		result =  ps1.executeQuery();
 		result.next();
 		gen = result.getString(1);
-		
+
 		String query2 = 
 				"SELECT p.generation_id, r.identifier"
-				+ "FROM pokemon_species as p, regions as r"
-				+ "WHERE p.id= " + id + " AND p.generation_id=r.id";
-		
+						+ "FROM pokemon_species as p, regions as r"
+						+ "WHERE p.id= " + id + " AND p.generation_id=r.id";
+
 		PreparedStatement ps2 = db.prepareStatement(query2);
 		result =  ps2.executeQuery();
 		result.next();
 		region = result.getString(1);
-		
+
 		return region + gen;
 	}
-	
-	public Vector<Integer> getSelectedPokemonStatus(int id) throws SQLException{
+
+	public Vector<Integer> getSelectedPokemonStatus() throws SQLException{
+		int id = getSelectedPokemonID();
 		Vector<Integer> stats= new Vector<Integer>();
 		ResultSet result;
 		String query = 
-				"SELECT ps.base_stat"
-				+ "FROM pokemon_stats AS ps, stats AS s"
-				+ "WHERE ps.pokemon_id = " + id + " AND s.id = ps.stat_id";
-		
+				"SELECT ps.base_stat FROM pokemon_stats AS ps, stats AS s WHERE ps.pokemon_id = " + id + " AND s.id = ps.stat_id";
+
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
-		result.next();
+
 		while(result.next()) {
 			stats.add(result.getInt(1));
 		}
 		return stats;
 	}
-	
+
 	// add query 5 here.
 	// add query 6 here.
 	// add query 10 here

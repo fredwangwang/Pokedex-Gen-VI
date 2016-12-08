@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import javafx.scene.image.Image;
+import sun.awt.image.ImageCache.PixelsKey;
 
 import java.awt.Toolkit;
 import javax.swing.JPanel;
@@ -32,6 +33,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.JScrollBar;
 import javax.swing.JEditorPane;
 import java.awt.Component;
@@ -67,6 +70,8 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 	private JButton advSearchButton;
 	private JButton quitButton;
 	private JTable table;
+
+	private TableRowSorter<DefaultTableModel> sorter;
 
 
 	public static void main(String[] args) {
@@ -164,11 +169,17 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 			}
 		};
 
+        sorter = new TableRowSorter<DefaultTableModel>();
+        sorter.setModel(poketableModel);
+        table.setRowSorter(sorter);
 		// hard coded value, which is the height of the icons used
 		table.setRowHeight(30);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(this);
 		table.setModel(poketableModel);
+		table.getColumnModel().getColumn(0).setMinWidth(5);
+		table.getColumnModel().getColumn(0).setPreferredWidth(5);
+		
 		scrollPane.setViewportView(table);
 
 		menuBar = new JMenuBar();

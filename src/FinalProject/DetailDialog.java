@@ -258,11 +258,11 @@ public class DetailDialog extends JDialog {
 		}
 
 		try {
-			textField_1.setText(model.getSelectedPokemoneggGroup(PokemonID));
-			textField_2.setText(model.getSelectedPokemonCaptureRate(PokemonID));
-			textField_3.setText(model.getSelectedPokemonGenderRatio(PokemonID));
-			textField_4.setText(model.getSelectedPokemonBaseExp(PokemonID));
-			textField_5.setText(model.getSelectedPokemonBaseHappness(PokemonID));
+			textField_1.setText(model.getSelectedPokemoneggGroup());
+			textField_2.setText(model.getSelectedPokemonCaptureRate());
+			textField_3.setText(model.getSelectedPokemonGenderRatio());
+			textField_4.setText(model.getSelectedPokemonBaseExp());
+			textField_5.setText(model.getSelectedPokemonBaseHappness());
 		} catch (SQLException e) {
 			CommonUtils.sqlExceptionHandler(e, this);	
 		}
