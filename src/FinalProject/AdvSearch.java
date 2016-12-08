@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
@@ -29,19 +30,22 @@ import javax.swing.border.TitledBorder;
 
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import java.awt.Color;
 
-public class AdvSearch extends JDialog {
+public class AdvSearch extends JDialog implements ActionListener {
 
 	private final JPanel contentPanel = new JPanel();
-	private PokeTableModel pktablemodel;
+	private PokeTableModel model;
 
 	// widgets 
 	private JButton okButton;
 	private JButton cancelButton;
-	private JComboBox<String> comboBox;
+	private JComboBox<String> statsCombo;
 
 	// data
+	private Vector<Vector> stats;
 	private Vector<Vector> types;
+
 	private JPanel panel;
 	private JButton btnNewButton;
 	private JSeparator separator_1;
@@ -49,13 +53,15 @@ public class AdvSearch extends JDialog {
 	private JPanel statsPanel;
 	private JTextField textField;
 	private JLabel label;
-	private JLabel label_1;
-	private JCheckBox chckbxSum;
-	private JCheckBox chckbxStats;
+	private JCheckBox sumChckbx;
+	private JCheckBox statsChckbx;
 	private JTextField textField_1;
 	private JPanel panel_1;
 	private JPanel panel_2;
 	private int checkBoxCounter;
+	private JPanel typePanel;
+	private JCheckBox typeChckbx;
+	private JComboBox typeCombo;
 
 	public static void main(String[] args) {
 		try {
@@ -67,7 +73,7 @@ public class AdvSearch extends JDialog {
 	}
 
 	public AdvSearch(PokeTableModel m) {
-		pktablemodel = m;
+		model = m;
 		checkBoxCounter = 0;
 		Initialize();
 	}
@@ -76,7 +82,7 @@ public class AdvSearch extends JDialog {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+"0.png"));
 		setTitle("Advance Search");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 300, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.NORTH);
@@ -84,11 +90,12 @@ public class AdvSearch extends JDialog {
 			// initialize type combo box
 			try {
 				// debug only
-				if (pktablemodel == null){
-					pktablemodel = new PokeTableModel();
-					pktablemodel.login("huhwang", "Pokemon");
+				if (model == null){
+					model = new PokeTableModel();
+					model.login("huhwang", "Pokemon");
 				}
-				types = pktablemodel.getPokemonStatus();
+				stats = model.getPokemonStatus();
+				types = model.getPokemonTypes();
 			} 
 			catch (SQLException e1) {
 				CommonUtils.sqlExceptionHandler(e1, this);
@@ -97,13 +104,29 @@ public class AdvSearch extends JDialog {
 				System.out.println("Null pointer");
 			}
 			catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
+
+			contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+			{
+				typePanel = new JPanel();
+				FlowLayout flowLayout = (FlowLayout) typePanel.getLayout();
+				flowLayout.setAlignment(FlowLayout.LEFT);
+				typePanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Type", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+				contentPanel.add(typePanel);
+				{
+					typeChckbx = new JCheckBox("Type: ");
+					typeChckbx.addActionListener(this);
+					typePanel.add(typeChckbx);
+				}
+				{
+					typeCombo = new JComboBox(types.elementAt(1));
+					typePanel.add(typeCombo);
+				}
+			}
 
 			statsPanel = new JPanel();
-			statsPanel.setBorder(new TitledBorder(null, "Status", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			statsPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Status", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 			contentPanel.add(statsPanel);
 			statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
 			{
@@ -112,19 +135,12 @@ public class AdvSearch extends JDialog {
 				flowLayout.setAlignment(FlowLayout.LEFT);
 				statsPanel.add(panel_1);
 
-				chckbxStats = new JCheckBox("Status: ");
-				chckbxStats.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						if (chckbxStats.isSelected())
-							checkBoxCounter++;
-						else 
-							checkBoxCounter--;
-					}
-				});
-				panel_1.add(chckbxStats);
-				comboBox = new JComboBox<String>(types.elementAt(1));
-				panel_1.add(comboBox);
-				comboBox.setSelectedIndex(0);
+				statsChckbx = new JCheckBox("Status: ");
+				statsChckbx.addActionListener(this);
+				panel_1.add(statsChckbx);
+				statsCombo = new JComboBox<String>(stats.elementAt(1));
+				panel_1.add(statsCombo);
+				statsCombo.setSelectedIndex(0);
 				{
 					label = new JLabel(">");
 					panel_1.add(label);
@@ -141,26 +157,15 @@ public class AdvSearch extends JDialog {
 				flowLayout.setAlignment(FlowLayout.LEFT);
 				statsPanel.add(panel_2);
 				{
-					chckbxSum = new JCheckBox("Sum > ");
-					chckbxSum.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							if (chckbxSum.isSelected())
-								checkBoxCounter++;
-							else 
-								checkBoxCounter--;
-						}
-					});
-					panel_2.add(chckbxSum);
+					sumChckbx = new JCheckBox("Sum > ");
+					sumChckbx.addActionListener(this);
+					panel_2.add(sumChckbx);
 				}
 				{
 					textField_1 = new JTextField();
 					panel_2.add(textField_1);
 					textField_1.setColumns(3);
 				}
-			}
-			{
-				label_1 = new JLabel("");
-				statsPanel.add(label_1);
 			}
 		}
 
@@ -170,27 +175,14 @@ public class AdvSearch extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						if (checkBoxCounter == 0){
-							return;
-						}
-						// TODO
-						// check each chckbx and do the query.
-						
-					}
-				});
+				okButton.addActionListener(this);
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
 				cancelButton = new JButton("Cancel");
-				cancelButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						dispose();
-					}
-				});
+				cancelButton.addActionListener(this);
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
@@ -198,9 +190,56 @@ public class AdvSearch extends JDialog {
 		setVisible(true);
 	}
 
-	private void addAButton(String text, Container container) {
-		JButton button = new JButton(text);
-		button.setAlignmentX(Component.CENTER_ALIGNMENT);
-		container.add(button);
+	//	private void addAButton(String text, Container container) {
+	//		JButton button = new JButton(text);
+	//		button.setAlignmentX(Component.CENTER_ALIGNMENT);
+	//		container.add(button);
+	//	}
+
+	// TODO
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == typeChckbx){
+			if (typeChckbx.isSelected())
+				checkBoxCounter++;
+			else 
+				checkBoxCounter--;
+		}
+		if (e.getSource() == sumChckbx){
+			if (sumChckbx.isSelected())
+				checkBoxCounter++;
+			else 
+				checkBoxCounter--;
+		}
+		if (e.getSource() == statsChckbx){
+			if (statsChckbx.isSelected())
+				checkBoxCounter++;
+			else 
+				checkBoxCounter--;
+		}
+		System.out.println("action!" + checkBoxCounter);
+		if (e.getSource() == okButton){
+			// which means no choice made, why bother making search?
+			if (checkBoxCounter == 0){
+				return;
+			}
+			else {
+				List<Vector<Object[]>> DATAs = new ArrayList<>();
+
+				// issue multi-query, and deal with the resulting vector. Then do 'intersection' on those resulting vector
+				// 1. deal with each chckbx queries.
+				if (statsChckbx.isSelected()){
+
+				}
+				if (sumChckbx.isSelected()){
+
+				}
+
+
+			}
+		}
+		if (e.getSource() == cancelButton){
+			dispose();
+		}
 	}
 }

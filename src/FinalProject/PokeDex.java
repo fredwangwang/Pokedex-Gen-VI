@@ -77,7 +77,6 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 	private TableRowSorter<DefaultTableModel> sorter;
 
-
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -208,8 +207,6 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 			CommonUtils.sqlExceptionHandler(e1, framePokedex);
 		}
 	}
-
-
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {

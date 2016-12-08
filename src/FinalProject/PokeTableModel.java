@@ -124,6 +124,30 @@ public class PokeTableModel extends DefaultTableModel {
 
 		return type;
 	}
+	
+	public Vector<Vector> getPokemonTypes() throws SQLException {
+		Vector<String> typeNames = new Vector<>();
+		Vector<Integer> typeInts = new Vector<>();
+
+		String query =
+				"SELECT id,  identifier " +
+						"FROM types " +
+						"WHERE id < 1000";
+
+		Statement stmt = db.createStatement();
+		ResultSet result = stmt.executeQuery(query);
+		
+		while(result.next()){
+			typeInts.add(result.getInt(1));
+			typeNames.add(CommonUtils.capitalize(result.getString(2)));			
+		}
+
+		Vector<Vector> type = new Vector<>();
+		type.add(typeInts);
+		type.add(typeNames);
+
+		return type;
+	}
 
 	public String getSelectedPokemoneggGroup() throws SQLException {
 		int id = getSelectedPokemonID();
@@ -364,4 +388,6 @@ public class PokeTableModel extends DefaultTableModel {
 		
 		return rows;
 	}
+
+
 }
