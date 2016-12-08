@@ -133,12 +133,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		detailButton.setEnabled(false);
 		detailButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
 					DetailDialog detail = new DetailDialog(poketableModel);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 			}
 		});
 		ControlPanel.add(detailButton);

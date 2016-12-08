@@ -21,16 +21,20 @@ public class statusPanel extends JPanel {
 	private String[] statsName = {"HP: ","Attack: ","Defense: ", "Sp.Atk: ","Sp.Def: ","Speed: "};
 	private Color[] statsColor = {Color.RED, Color.ORANGE, Color.YELLOW, Color.BLUE,Color.GREEN, Color.MAGENTA};
 
-	public statusPanel(PokeTableModel model) throws SQLException {
+	public statusPanel(PokeTableModel model) {
 		this.model = model;
 		initialize();
 	}
 
-	private void initialize() throws SQLException{
+	private void initialize(){
 		// Set the size and do the query
 		setPreferredSize(new Dimension(250, 200));
 
-		stats = model.getSelectedPokemonStatus(1);
+		try {
+			stats = model.getSelectedPokemonStatus(1);
+		} catch (SQLException e) {
+			CommonUtils.sqlExceptionHandler(e, this);
+		}
 	}
 
 	public void paintComponent(Graphics g)

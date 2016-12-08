@@ -47,14 +47,8 @@ public class DetailDialog extends JDialog {
 
 	//
 
-	public DetailDialog() throws SQLException {
-
-		PokemonID = 0;
-		Initialize();
-	}
-
 	// Given selected row id, the icon will display the sprite of the pokemon selected
-	public DetailDialog(PokeTableModel model) throws SQLException{
+	public DetailDialog(PokeTableModel model){
 		this.model = model;
 		PokemonID = model.getSelectedPokemonID();
 		PokemonName = model.getSelectedPokemonName();
@@ -63,10 +57,8 @@ public class DetailDialog extends JDialog {
 	}
 
 
-	private void Initialize() throws SQLException {
-
-setTitle("Detail Info");
-
+	private void Initialize() {
+		setTitle("Detail Info - " + PokemonName + "  " + PokemonID);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+PokemonID+".png"));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 319, 286);
@@ -95,35 +87,35 @@ setTitle("Detail Info");
 				JPanel basicInfo = new JPanel();
 				InfoTabPanel.addTab("Basic", null, basicInfo, null);
 				basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.Y_AXIS));
-//				{
-//					JPanel namePanel = new JPanel();
-//					basicInfo.add(namePanel);
-//					namePanel.setLayout(new GridLayout(0, 4, 0, 0));
-//					{
-//						JLabel lblName = new JLabel("Name: ");
-//						lblName.setHorizontalAlignment(SwingConstants.CENTER);
-//						lblName.setHorizontalTextPosition(SwingConstants.CENTER);
-//						namePanel.add(lblName);
-//
-//						txt1Hh = new JTextField();
-//						txt1Hh.setHorizontalAlignment(SwingConstants.TRAILING);
-//						txt1Hh.setBorder(null);
-//						txt1Hh.setText(PokemonName);
-//						txt1Hh.setEditable(false);
-//						namePanel.add(txt1Hh);
-//
-//						JLabel lblName1 = new JLabel("Nation ID: ");
-//						lblName1.setHorizontalAlignment(SwingConstants.TRAILING);
-//						namePanel.add(lblName1);
-//
-//						txtHh = new JTextField();
-//						txtHh.setHorizontalAlignment(SwingConstants.TRAILING);
-//						txtHh.setBorder(null);
-//						txtHh.setText(Integer.toString(PokemonID));
-//						txtHh.setEditable(false);
-//						namePanel.add(txtHh);
-//					}
-//				}
+				//				{
+				//					JPanel namePanel = new JPanel();
+				//					basicInfo.add(namePanel);
+				//					namePanel.setLayout(new GridLayout(0, 4, 0, 0));
+				//					{
+				//						JLabel lblName = new JLabel("Name: ");
+				//						lblName.setHorizontalAlignment(SwingConstants.CENTER);
+				//						lblName.setHorizontalTextPosition(SwingConstants.CENTER);
+				//						namePanel.add(lblName);
+				//
+				//						txt1Hh = new JTextField();
+				//						txt1Hh.setHorizontalAlignment(SwingConstants.TRAILING);
+				//						txt1Hh.setBorder(null);
+				//						txt1Hh.setText(PokemonName);
+				//						txt1Hh.setEditable(false);
+				//						namePanel.add(txt1Hh);
+				//
+				//						JLabel lblName1 = new JLabel("Nation ID: ");
+				//						lblName1.setHorizontalAlignment(SwingConstants.TRAILING);
+				//						namePanel.add(lblName1);
+				//
+				//						txtHh = new JTextField();
+				//						txtHh.setHorizontalAlignment(SwingConstants.TRAILING);
+				//						txtHh.setBorder(null);
+				//						txtHh.setText(Integer.toString(PokemonID));
+				//						txtHh.setEditable(false);
+				//						namePanel.add(txtHh);
+				//					}
+				//				}
 				{
 					JSeparator separator = new JSeparator();
 					separator.setMaximumSize(new Dimension(10000, 0));
@@ -277,7 +269,7 @@ setTitle("Detail Info");
 
 		pack();
 		setVisible(true);
-		
+
 	}
 
 }
