@@ -295,9 +295,10 @@ public class PokeTableModel extends DefaultTableModel {
 		// query(10), just leave result here, I integrate it into GUI
 	}
 	
-	public void getQualifiedPokemonStatusSum(int sum) throws SQLException {
+	public Vector<Object[]> getQualifiedPokemonStatusSum(int sum) throws SQLException {
 		ResultSet result;
-		String query = "SELECT p.pokemon_id, ps.identifier, t.identifier" 
+		String query = 
+				"SELECT p.pokemon_id, ps.identifier, t.identifier" 
 				    + "FROM (select pokemon_id, sum(base_stat)" 
 						+ "FROM pokemon_stats" 
 						+ "GROUP BY pokemon_id" 
@@ -308,7 +309,30 @@ public class PokeTableModel extends DefaultTableModel {
 					+ "WHERE sum >= " + sum + " AND ps.id = p.pokemon_id AND pt.pokemon_id = p.pokemon_id AND pt.type_id = t.id";
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
-		result.next();
+
+		int id = -1, lastid = -1;
+		Vector<Object[]> rows = new Vector<>();
+		Object rowData[] = new Object[3];
+
+		while (result.next()){
+			id = result.getInt(1);
+			// Means same pokemon with different type
+			if (id != lastid){
+				rowData = new Object[4];
+				rowData[0] = id;
+				rowData[1] = CommonUtils.capitalize(result.getString(2));
+				rowData[2] = CommonUtils.capitalize(result.getString(3));
+				rows.add(rowData);
+				lastid = id;
+			}
+			else {
+				String types = (rows.lastElement()[2]) + ", " + CommonUtils.capitalize(result.getString(2));
+				rowData[2] = types;
+				rows.set(rows.size()-1, rowData);
+			}
+		}
+		
+		return rows;
 	}
 	
 	public Vector<Object[]> getQualifiedPokemonBasedType(String type) throws SQLException {
@@ -316,7 +340,8 @@ public class PokeTableModel extends DefaultTableModel {
 		String t = type.toLowerCase();
 		
 		//NOTE: For this query we only return the given type since that seems
-		String query = "SELECT pt.pokemon_id, p.identifier, t.identifier" 
+		String query = 
+				"SELECT pt.pokemon_id, p.identifier, t.identifier" 
                        + "FROM pokemon_types AS pt, types AS t, pokemon_species AS p"
                        + "WHERE t.identifier = " + t + " AND t.id = pt.type_id AND pt.pokemon_id = p.id";
 		
