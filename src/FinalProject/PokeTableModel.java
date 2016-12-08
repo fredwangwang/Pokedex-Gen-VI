@@ -272,9 +272,6 @@ public class PokeTableModel extends DefaultTableModel {
 	}
 	
 	public Vector<Integer> getSelectedPokemonStatus(int id) throws SQLException{
-		// TODO do query
-		
-		//  (modify query 2)
 		Vector<Integer> stats= new Vector<Integer>();
 		ResultSet result;
 		String query = 
@@ -288,12 +285,6 @@ public class PokeTableModel extends DefaultTableModel {
 		while(result.next()) {
 			stats.add(result.getInt(1));
 		}
-/*		stats.add(100);
-		stats.add(100);
-		stats.add(100);
-		stats.add(100);
-		stats.add(100);
-		stats.add(100);*/
 		return stats;
 	}
 	
