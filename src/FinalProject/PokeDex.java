@@ -116,7 +116,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					poketableModel.nameSearch(searchField.getText());
+					poketableModel.nameSearch(searchField.getText().trim());
 				} catch (SQLException e1) {
 					CommonUtils.sqlExceptionHandler(e1, framePokedex);
 				}
@@ -187,6 +187,12 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 		aboutMenu = new JMenu("About");
 		menuBar.add(aboutMenu);
+		
+		try {
+			poketableModel.nameSearch(searchField.getText().trim());
+		} catch (SQLException e1) {
+			CommonUtils.sqlExceptionHandler(e1, framePokedex);
+		}
 	}
 
 

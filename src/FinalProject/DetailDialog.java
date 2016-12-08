@@ -23,6 +23,10 @@ import javax.swing.border.EtchedBorder;
 import org.omg.CORBA.INTERNAL;
 
 import javax.swing.JTextField;
+import javax.swing.JTree;
+import javax.swing.JProgressBar;
+import javax.swing.JTable;
+import java.awt.GridLayout;
 
 public class DetailDialog extends JDialog {
 	private JTextField txt1Hh;
@@ -60,7 +64,7 @@ public class DetailDialog extends JDialog {
 	private void Initialize() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+PokemonID+".png"));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 396, 554);
+		setBounds(100, 100, 319, 286);
 
 		getContentPane().setLayout(new BorderLayout());
 		{
@@ -81,33 +85,40 @@ public class DetailDialog extends JDialog {
 		}
 		{
 			JTabbedPane InfoTabPanel = new JTabbedPane(JTabbedPane.TOP);
-			getContentPane().add(InfoTabPanel, BorderLayout.CENTER);
+			getContentPane().add(InfoTabPanel, BorderLayout.NORTH);
 			{
 				JPanel basicInfo = new JPanel();
 				InfoTabPanel.addTab("Basic", null, basicInfo, null);
 				basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.Y_AXIS));
-				{
-					JPanel namePanel = new JPanel();
-					basicInfo.add(namePanel);
-					namePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-					{
-						JLabel lblName = new JLabel("Name: ");
-						namePanel.add(lblName);
-
-						txt1Hh = new JTextField();
-						txt1Hh.setText(PokemonName);
-						txt1Hh.setEditable(false);
-						namePanel.add(txt1Hh);
-
-						JLabel lblName1 = new JLabel("Nation ID: ");
-						namePanel.add(lblName1);
-
-						txtHh = new JTextField();
-						txtHh.setText(Integer.toString(PokemonID));
-						txtHh.setEditable(false);
-						namePanel.add(txtHh);
-					}
-				}
+//				{
+//					JPanel namePanel = new JPanel();
+//					basicInfo.add(namePanel);
+//					namePanel.setLayout(new GridLayout(0, 4, 0, 0));
+//					{
+//						JLabel lblName = new JLabel("Name: ");
+//						lblName.setHorizontalAlignment(SwingConstants.CENTER);
+//						lblName.setHorizontalTextPosition(SwingConstants.CENTER);
+//						namePanel.add(lblName);
+//
+//						txt1Hh = new JTextField();
+//						txt1Hh.setHorizontalAlignment(SwingConstants.TRAILING);
+//						txt1Hh.setBorder(null);
+//						txt1Hh.setText(PokemonName);
+//						txt1Hh.setEditable(false);
+//						namePanel.add(txt1Hh);
+//
+//						JLabel lblName1 = new JLabel("Nation ID: ");
+//						lblName1.setHorizontalAlignment(SwingConstants.TRAILING);
+//						namePanel.add(lblName1);
+//
+//						txtHh = new JTextField();
+//						txtHh.setHorizontalAlignment(SwingConstants.TRAILING);
+//						txtHh.setBorder(null);
+//						txtHh.setText(Integer.toString(PokemonID));
+//						txtHh.setEditable(false);
+//						namePanel.add(txtHh);
+//					}
+//				}
 				{
 					JSeparator separator = new JSeparator();
 					separator.setMaximumSize(new Dimension(10000, 0));
@@ -115,20 +126,19 @@ public class DetailDialog extends JDialog {
 				}
 				{
 					JPanel typePanel = new JPanel();
-					FlowLayout flowLayout = (FlowLayout) typePanel.getLayout();
-					flowLayout.setAlignment(FlowLayout.LEFT);
 					basicInfo.add(typePanel);
+					typePanel.setLayout(new BorderLayout(10, 0));
 					{
 						JLabel lblType = new JLabel("Type");
-						typePanel.add(lblType);
+						typePanel.add(lblType, BorderLayout.WEST);
 					}
 					{
 						textField = new JTextField();
+						typePanel.add(textField, BorderLayout.EAST);
+						textField.setBorder(null);
 						textField.setText(PokemonType);
 						textField.setHorizontalAlignment(SwingConstants.TRAILING);
 						textField.setEditable(false);
-						textField.setColumns(15);
-						typePanel.add(textField);
 					}
 				}
 				{
@@ -138,19 +148,18 @@ public class DetailDialog extends JDialog {
 				}
 				{
 					JPanel panel = new JPanel();
-					FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-					flowLayout.setAlignment(FlowLayout.LEFT);
 					basicInfo.add(panel);
+					panel.setLayout(new BorderLayout(0, 0));
 					{
 						JLabel label = new JLabel("Egg Group(s)");
-						panel.add(label);
+						panel.add(label, BorderLayout.WEST);
 					}
 					{
 						textField_1 = new JTextField();
+						textField_1.setBorder(null);
 						textField_1.setHorizontalAlignment(SwingConstants.TRAILING);
 						textField_1.setEditable(false);
-						textField_1.setColumns(15);
-						panel.add(textField_1);
+						panel.add(textField_1, BorderLayout.EAST);
 					}
 				}
 				{
@@ -160,19 +169,18 @@ public class DetailDialog extends JDialog {
 				}
 				{
 					JPanel panel = new JPanel();
-					FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-					flowLayout.setAlignment(FlowLayout.LEFT);
 					basicInfo.add(panel);
+					panel.setLayout(new BorderLayout(0, 0));
 					{
 						JLabel label = new JLabel("Capture Rate");
-						panel.add(label);
+						panel.add(label, BorderLayout.WEST);
 					}
 					{
 						textField_2 = new JTextField();
+						textField_2.setBorder(null);
 						textField_2.setHorizontalAlignment(SwingConstants.TRAILING);
 						textField_2.setEditable(false);
-						textField_2.setColumns(15);
-						panel.add(textField_2);
+						panel.add(textField_2, BorderLayout.EAST);
 					}
 				}
 				{
@@ -182,21 +190,21 @@ public class DetailDialog extends JDialog {
 				}
 				{
 					JPanel panel = new JPanel();
-					FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-					flowLayout.setAlignment(FlowLayout.LEFT);
 					basicInfo.add(panel);
+					panel.setLayout(new BorderLayout(10, 0));
 					{
 						JLabel label = new JLabel("Gender Ratio");
-						panel.add(label);
+						panel.add(label, BorderLayout.WEST);
 					}
 					{
 						textField_3 = new JTextField();
+						textField_3.setBorder(null);
 						textField_3.setHorizontalAlignment(SwingConstants.TRAILING);
 						textField_3.setEditable(false);
-						textField_3.setColumns(15);
-						panel.add(textField_3);
+						panel.add(textField_3, BorderLayout.EAST);
 					}
 				}
+
 				{
 					JSeparator separator = new JSeparator();
 					separator.setMaximumSize(new Dimension(10000, 0));
@@ -204,20 +212,18 @@ public class DetailDialog extends JDialog {
 				}
 				{
 					JPanel panel = new JPanel();
-					FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-					flowLayout.setAlignment(FlowLayout.LEFT);
 					basicInfo.add(panel);
+					panel.setLayout(new BorderLayout(0, 0));
 					{
 						JLabel label = new JLabel("Base Exp");
-						panel.add(label);
+						panel.add(label, BorderLayout.WEST);
 					}
 					{
 						textField_4 = new JTextField();
-
+						textField_4.setBorder(null);
 						textField_4.setHorizontalAlignment(SwingConstants.TRAILING);
 						textField_4.setEditable(false);
-						textField_4.setColumns(15);
-						panel.add(textField_4);
+						panel.add(textField_4, BorderLayout.EAST);
 					}
 				}
 				{
@@ -227,25 +233,30 @@ public class DetailDialog extends JDialog {
 				}
 				{
 					JPanel panel = new JPanel();
-					FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-					flowLayout.setAlignment(FlowLayout.LEFT);
 					basicInfo.add(panel);
+					panel.setLayout(new BorderLayout(0, 0));
 					{
 						JLabel label = new JLabel("Base Happness");
-						panel.add(label);
+						panel.add(label, BorderLayout.WEST);
 					}
 					{
 						textField_5 = new JTextField();
+						textField_5.setBorder(null);
 						textField_5.setHorizontalAlignment(SwingConstants.TRAILING);
 						textField_5.setEditable(false);
-						textField_5.setColumns(15);
-						panel.add(textField_5);
+						panel.add(textField_5, BorderLayout.EAST);
 					}
 				}
 			}
 			{
-				JPanel statusInfo = new JPanel();
+				JPanel statusInfo = new statusPanel(model);
+				//JPanel statusInfo = new JPanel();
+				statusInfo.setPreferredSize(new Dimension(250, 200));
 				InfoTabPanel.addTab("Staus", null, statusInfo, null);
+			}
+			{
+				JPanel evolvInfo = new JPanel();
+				InfoTabPanel.addTab("Evolution", null, evolvInfo, null);
 			}
 		}
 
@@ -259,7 +270,9 @@ public class DetailDialog extends JDialog {
 			CommonUtils.sqlExceptionHandler(e, this);	
 		}
 
+		pack();
 		setVisible(true);
+		
 	}
 
 }

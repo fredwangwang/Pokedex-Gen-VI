@@ -39,8 +39,7 @@ public class AutoLoginDialog extends JDialog {
 			}
 		});
 
-		//pack();
-		setVisible(true);
+		setVisible(false);
 		login();
 	}
 
@@ -61,6 +60,7 @@ public class AutoLoginDialog extends JDialog {
 					"Login error: " + e.getMessage(),
 					"Login error",
 					ERROR_MESSAGE);
+			System.exit(1);
 		}
 	}
 }

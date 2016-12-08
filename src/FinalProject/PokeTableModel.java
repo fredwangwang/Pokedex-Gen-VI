@@ -45,16 +45,17 @@ public class PokeTableModel extends DefaultTableModel {
 
 	public void setSelectedRow(int selectedRow) {
 		this.selectedRow = selectedRow;
+		
+	}
+
+	public int getSelectedPokemonID() {
 		if (selectedRow != -1) {
 			if (nationalPokeID.size() > SelectedPokemonID)
 				SelectedPokemonID =  nationalPokeID.elementAt(selectedRow);
 		}
 		else {
 			SelectedPokemonID =  0;
-		}
-	}
-
-	public int getSelectedPokemonID() {
+		};
 		return SelectedPokemonID;
 	}
 
@@ -139,20 +140,22 @@ public class PokeTableModel extends DefaultTableModel {
 	public String getSelectedPokemoneggGroup(int id) throws SQLException {
 		String egggroup = "";
 		ResultSet result;
+
 		String query = 
 				"SELECT e.identifier "
 				+ "FROM egg_groups AS e, pokemon_species AS ps, pokemon_egg_groups AS peg "
-				+ "WHERE ps.id =" + id + " AND ps.id = peg.species_id AND peg.egg_group_id = e.id";
+				+ "WHERE ps.id = (?) AND ps.id = peg.species_id AND peg.egg_group_id = e.id";
 		
 		PreparedStatement ps = db.prepareStatement(query);
-		//ps.setInt(1, id); //What does this do? It stop throwing an error and works after I commented it out - Khanh
+		ps.setInt(1, id); //What does this do? It stop throwing an error and works after I commented it out - Khanh
+						// This is a prepared statement substitution. Followed the style of CPW. - Huan
 		result =  ps.executeQuery();
 
 		result.next();
-		egggroup = result.getString(1);
+		egggroup = CommonUtils.capitalize(result.getString(1));
 
 		while (result.next()){
-			egggroup += ", " +result.getString(1);
+			egggroup += ", " + CommonUtils.capitalize(result.getString(1));
 		}
 
 		return egggroup;
@@ -188,7 +191,7 @@ public class PokeTableModel extends DefaultTableModel {
 		}
 		female *= 12.5;
 		double male = 100.0 - female;
-		return female + "% female, " + male + "% male";
+		return male + "% male, " + female + "% female";
 	}
 
 	public String getSelectedPokemonBaseExp(int id) throws SQLException{
@@ -249,7 +252,14 @@ public class PokeTableModel extends DefaultTableModel {
 	public Vector<Integer> getSelectedPokemonStatus(int id){
 		// TODO do query
 		//  (modify query 2)
-		return null;
+		Vector<Integer> stats= new Vector<Integer>();
+		stats.add(100);
+		stats.add(100);
+		stats.add(100);
+		stats.add(100);
+		stats.add(100);
+		stats.add(100);
+		return stats;
 	}
 	
 	// add query 5 here.
