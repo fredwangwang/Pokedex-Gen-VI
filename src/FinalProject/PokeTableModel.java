@@ -192,7 +192,6 @@ public class PokeTableModel extends DefaultTableModel {
 	}
 
 	public String getSelectedPokemonBaseExp(int id) throws SQLException{
-		// TODO do query
 		// query returns int, make it a string to return (pokemonspecies)
 		String base = "";
 		ResultSet result;
@@ -240,10 +239,32 @@ public class PokeTableModel extends DefaultTableModel {
 		return generation;
 	}
 
-	public String getSelectedPokemonRegion(int id){
+	public String getSelectedPokemonRegion(int id) throws SQLException{
 		// TODO do query
+		int gen;
+		String region;
+		ResultSet result;
+		String query1 = 
+				"SELECT g.identifier"
+				+ "FROM generations AS g, pokemon_species AS ps"
+				+ "WHERE ps.id = " + id + " AND g.id = ps.generation_id";
+		
+		PreparedStatement ps1 = db.prepareStatement(query1);
+		result =  ps1.executeQuery();
+		result.next();
+		gen = Integer.parseInt(result.getString(1));
+		
+		String query2 = 
+				"SELECT p.generation_id, r.identifier"
+				+ "FROM pokemon_species as p, regions as r"
+				+ "WHERE p.id= " + gen + " AND p.generation_id=r.id";
+		PreparedStatement ps2 = db.prepareStatement(query2);
+		result =  ps2.executeQuery();
+		result.next();
+		region = result.getString(1);
+		
 		//  (query 4 & 7)
-		return "";
+		return region;
 	}
 	
 	public Vector<Integer> getSelectedPokemonStatus(int id){
