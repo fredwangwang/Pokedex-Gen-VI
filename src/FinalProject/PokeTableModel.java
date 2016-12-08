@@ -306,17 +306,120 @@ public class PokeTableModel extends DefaultTableModel {
 		return stats;
 	}
 
-	// TODO
-	public void getSelectedPokemonAncestor() {
-		// query(5), just leave result here, I integrate it into GUI
+	public Vector<Object[]> getSelectedPokemonAncestor(int Pid) throws SQLException {
+		ResultSet result;
+		String query = 
+				"SELECT ps.evolves_from_species_id, p.identifier, t.identifier"
+				+ "FROM (SELECT evolves_from_species_id"
+				      + "FROM pokemon_species" 
+				      + "WHERE id = " + Pid + ") AS ps,"
+				      + "pokemon_species AS p,"
+				      + "pokemon_types AS pt,"
+				      + "types AS t"
+				+ "WHERE ps.evolves_from_species_id = p.id AND p.id = pt.pokemon_id AND pt.type_id = t.id";
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+
+		int id = -1, lastid = -1;
+		Vector<Object[]> rows = new Vector<>();
+		Object rowData[] = new Object[3];
+
+		while (result.next()){
+			id = result.getInt(1);
+			// Means same pokemon with different type
+			if (id != lastid){
+				rowData = new Object[4];
+				rowData[0] = id;
+				rowData[1] = CommonUtils.capitalize(result.getString(2));
+				rowData[2] = CommonUtils.capitalize(result.getString(3));
+				rows.add(rowData);
+				lastid = id;
+			}
+			else {
+				String types = (rows.lastElement()[2]) + ", " + CommonUtils.capitalize(result.getString(2));
+				rowData[2] = types;
+				rows.set(rows.size()-1, rowData);
+			}
+		}
+		
+		return rows;
 	}
 	
-	public void getSelectedPokemonEvolvChain() {
-		// query(6), just leave result here, I integrate it into GUI
+	public Vector<Object[]> getSelectedPokemonEvolvChain(int Pid) throws SQLException {
+		ResultSet result;
+		String query = 
+				"SELECT ps.id, ps.identifier, t.identifier"
+				+ "FROM  pokemon_species AS ps, pokemon_types AS pt, types AS t"
+				+ "WHERE ps.id<>" + Pid
+				+ "AND evolution_chain_id = (SELECT evolution_chain_id"
+					+ "FROM pokemon_species"
+					+ "WHERE id="+ Pid + ")"
+				+ "AND ps.id = pt.pokemon_id AND pt.type_id = t.id";
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+
+		int id = -1, lastid = -1;
+		Vector<Object[]> rows = new Vector<>();
+		Object rowData[] = new Object[3];
+
+		while (result.next()){
+			id = result.getInt(1);
+			// Means same pokemon with different type
+			if (id != lastid){
+				rowData = new Object[4];
+				rowData[0] = id;
+				rowData[1] = CommonUtils.capitalize(result.getString(2));
+				rowData[2] = CommonUtils.capitalize(result.getString(3));
+				rows.add(rowData);
+				lastid = id;
+			}
+			else {
+				String types = (rows.lastElement()[2]) + ", " + CommonUtils.capitalize(result.getString(2));
+				rowData[2] = types;
+				rows.set(rows.size()-1, rowData);
+			}
+		}
+		
+		return rows;
 	}
 	
-	public void getQualifiedPokemonBasedStatus() {
-		// query(10), just leave result here, I integrate it into GUI
+	public Vector<Object[]> getQualifiedPokemonBasedStatus(String stat, int base) throws SQLException {
+		ResultSet result;
+		String s = stat.toLowerCase();
+		String query = 
+				"SELECT distinct ps.pokemon_id, p.identifier, t.identifier" 
+				+ "FROM pokemon_stats AS ps, stats AS s, pokemon_species AS p, pokemon_types AS pt, types AS t"
+				+ "WHERE s.identifier = " + s + " AND ps.base_stat >= " + base +" AND ps.pokemon_id = p.id AND pt.pokemon_id = p.id AND pt.type_id = t.id"
+				+ "ORDER by ps.pokemon_id";
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+
+		int id = -1, lastid = -1;
+		Vector<Object[]> rows = new Vector<>();
+		Object rowData[] = new Object[3];
+
+		while (result.next()){
+			id = result.getInt(1);
+			// Means same pokemon with different type
+			if (id != lastid){
+				rowData = new Object[4];
+				rowData[0] = id;
+				rowData[1] = CommonUtils.capitalize(result.getString(2));
+				rowData[2] = CommonUtils.capitalize(result.getString(3));
+				rows.add(rowData);
+				lastid = id;
+			}
+			else {
+				String types = (rows.lastElement()[2]) + ", " + CommonUtils.capitalize(result.getString(2));
+				rowData[2] = types;
+				rows.set(rows.size()-1, rowData);
+			}
+		}
+		
+		return rows;
 	}
 	
 	public Vector<Object[]> getQualifiedPokemonStatusSum(int sum) throws SQLException {
