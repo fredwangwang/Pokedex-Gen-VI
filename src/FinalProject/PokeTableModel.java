@@ -271,17 +271,29 @@ public class PokeTableModel extends DefaultTableModel {
 		return region + gen;
 	}
 	
-	public Vector<Integer> getSelectedPokemonStatus(int id){
+	public Vector<Integer> getSelectedPokemonStatus(int id) throws SQLException{
 		// TODO do query
 		
 		//  (modify query 2)
 		Vector<Integer> stats= new Vector<Integer>();
+		ResultSet result;
+		String query = 
+				"SELECT ps.base_stat"
+				+ "FROM pokemon_stats AS ps, stats AS s"
+				+ "WHERE ps.pokemon_id = " + id + " AND s.id = ps.stat_id";
+		
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+		result.next();
+		while(result.next()) {
+			stats.add(result.getInt(1));
+		}
+/*		stats.add(100);
 		stats.add(100);
 		stats.add(100);
 		stats.add(100);
 		stats.add(100);
-		stats.add(100);
-		stats.add(100);
+		stats.add(100);*/
 		return stats;
 	}
 	

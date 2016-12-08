@@ -3,6 +3,7 @@ package FinalProject;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.JPanel;
@@ -20,12 +21,12 @@ public class statusPanel extends JPanel {
 	private String[] statsName = {"HP: ","Attack: ","Defense: ", "Sp.Atk: ","Sp.Def: ","Speed: "};
 	private Color[] statsColor = {Color.RED, Color.ORANGE, Color.YELLOW, Color.BLUE,Color.GREEN, Color.MAGENTA};
 
-	public statusPanel(PokeTableModel model) {
+	public statusPanel(PokeTableModel model) throws SQLException {
 		this.model = model;
 		initialize();
 	}
 
-	private void initialize(){
+	private void initialize() throws SQLException{
 		// Set the size and do the query
 		setPreferredSize(new Dimension(250, 200));
 
