@@ -246,10 +246,10 @@ public class DetailDialog extends JDialog {
 				}
 			}
 			{
-				JPanel statusInfo = new statusPanel(model);
-				//JPanel statusInfo = new JPanel();
-				statusInfo.setPreferredSize(new Dimension(250, 200));
-				InfoTabPanel.addTab("Staus", null, statusInfo, null);
+				JPanel statsInfo = new statsPanel(model);
+				//JPanel statsInfo = new JPanel();
+				statsInfo.setPreferredSize(new Dimension(250, 200));
+				InfoTabPanel.addTab("Stats", null, statsInfo, null);
 			}
 			{
 				JPanel evolvInfo = new JPanel();

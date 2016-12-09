@@ -80,7 +80,7 @@ public class PokeTableModel extends DefaultTableModel {
 		setTable(formatPokemonResult(res));
 	}
 
-	public Vector<Vector> getPokemonStatus() throws SQLException {
+	public Vector<Vector> getPokemonstats() throws SQLException {
 		Vector<String> typeNames = new Vector<>();
 		Vector<Integer> typeInts = new Vector<>();
 
@@ -268,7 +268,7 @@ public class PokeTableModel extends DefaultTableModel {
 		return region + gen;
 	}
 
-	public Vector<Integer> getSelectedPokemonStatus() throws SQLException{
+	public Vector<Integer> getSelectedPokemonstats() throws SQLException{
 		int id = getSelectedPokemonID();
 		Vector<Integer> stats= new Vector<Integer>();
 		ResultSet result;
@@ -364,6 +364,7 @@ public class PokeTableModel extends DefaultTableModel {
 	}
 
 	public Vector<Object[]> getQualifiedPokemonBasedStatus(int statID, int base) throws SQLException {
+
 		ResultSet result;
 		String query = 
 				"SELECT distinct ps.pokemon_id, p.identifier, t.identifier" 
@@ -377,7 +378,9 @@ public class PokeTableModel extends DefaultTableModel {
 		return formatPokemonResult(result);
 	}
 
+
 	public Vector<Object[]> getQualifiedPokemonStatusSum(int sum) throws SQLException {
+
 		ResultSet result;
 		String query = 
 				"SELECT p.pokemon_id, ps.identifier, t.identifier " 
