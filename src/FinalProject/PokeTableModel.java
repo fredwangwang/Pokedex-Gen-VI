@@ -364,7 +364,6 @@ public class PokeTableModel extends DefaultTableModel {
 	}
 
 	public Vector<Object[]> getQualifiedPokemonBasedStatus(int statID, int base) throws SQLException {
-
 		ResultSet result;
 		String query = 
 				"SELECT distinct ps.pokemon_id, p.identifier, t.identifier " 
