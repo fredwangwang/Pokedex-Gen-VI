@@ -17,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
@@ -51,11 +53,11 @@ public class AdvSearch extends JDialog implements ActionListener {
 	private JSeparator separator_1;
 	private JButton btnNewButton_1;
 	private JPanel statsPanel;
-	private JTextField textField;
+	private JTextField statsField;
 	private JLabel label;
 	private JCheckBox sumChckbx;
 	private JCheckBox statsChckbx;
-	private JTextField textField_1;
+	private JTextField sumField;
 	private JPanel panel_1;
 	private JPanel panel_2;
 	private int checkBoxCounter;
@@ -146,9 +148,9 @@ public class AdvSearch extends JDialog implements ActionListener {
 					panel_1.add(label);
 				}
 				{
-					textField = new JTextField();
-					panel_1.add(textField);
-					textField.setColumns(3);
+					statsField = new JTextField();
+					panel_1.add(statsField);
+					statsField.setColumns(3);
 				}
 			}
 			{
@@ -157,14 +159,14 @@ public class AdvSearch extends JDialog implements ActionListener {
 				flowLayout.setAlignment(FlowLayout.LEFT);
 				statsPanel.add(panel_2);
 				{
-					sumChckbx = new JCheckBox("Sum > ");
+					sumChckbx = new JCheckBox("Status sum > ");
 					sumChckbx.addActionListener(this);
 					panel_2.add(sumChckbx);
 				}
 				{
-					textField_1 = new JTextField();
-					panel_2.add(textField_1);
-					textField_1.setColumns(3);
+					sumField = new JTextField();
+					panel_2.add(sumField);
+					sumField.setColumns(3);
 				}
 			}
 		}
@@ -187,6 +189,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				buttonPane.add(cancelButton);
 			}
 		}
+		pack();
 		setVisible(true);
 	}
 
@@ -200,20 +203,33 @@ public class AdvSearch extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == typeChckbx){
-			if (typeChckbx.isSelected())
+			if (typeChckbx.isSelected()){
 				checkBoxCounter++;
+			}
 			else 
 				checkBoxCounter--;
 		}
 		if (e.getSource() == sumChckbx){
-			if (sumChckbx.isSelected())
-				checkBoxCounter++;
+			if (sumChckbx.isSelected()){
+				if (CommonUtils.isfieldReturnNumber(sumField, this)){
+					checkBoxCounter++;
+				}
+				else{
+					sumChckbx.setSelected(false);
+				}
+			}
 			else 
 				checkBoxCounter--;
 		}
 		if (e.getSource() == statsChckbx){
-			if (statsChckbx.isSelected())
-				checkBoxCounter++;
+			if (statsChckbx.isSelected()){
+				if (CommonUtils.isfieldReturnNumber(statsField, this)){
+					checkBoxCounter++;
+				}		
+				else{
+					statsChckbx.setSelected(false);
+				}
+			}
 			else 
 				checkBoxCounter--;
 		}
@@ -227,16 +243,40 @@ public class AdvSearch extends JDialog implements ActionListener {
 				List<Vector<Object[]>> DATAs = new ArrayList<>();
 
 				// issue multi-query, and deal with the resulting vector. Then do 'intersection' on those resulting vector
-				// 1. deal with each chckbx queries.
-				if (statsChckbx.isSelected()){
-
+				// 1. deal with each chckbx queries and store data
+				try {
+					if (typeChckbx.isSelected()){
+						int typeID = (int) types.get(typeCombo.getSelectedIndex()).get(0);
+						DATAs.add(model.getQualifiedPokemonBasedType(typeID));
+					}
+					if (statsChckbx.isSelected()){
+						int statID = (int) stats.get(statsCombo.getSelectedIndex()).get(0);
+						if (CommonUtils.isfieldReturnNumber(statsField, this)){
+							DATAs.add(model.getQualifiedPokemonBasedStatus(statID, CommonUtils.fieldNumber));
+						}
+						else
+							return;
+					}
+					if (sumChckbx.isSelected()){
+						if (CommonUtils.isfieldReturnNumber(sumField, this)){
+							DATAs.add(model.getQualifiedPokemonStatusSum(CommonUtils.fieldNumber));
+						}
+						else
+							return;
+					}
+				} catch (SQLException sqlE) {
+					CommonUtils.sqlExceptionHandler(sqlE, this);
 				}
-				if (sumChckbx.isSelected()){
 
+				// 2. do intersection.
+				Set<Object[]> pokemon = new TreeSet<>(DATAs.get(0));
+				for (int i=1;i<DATAs.size();i++){
+					pokemon.retainAll(DATAs.get(i));
 				}
-
+				model.setTable(new Vector<Object[]>(pokemon));
 
 			}
+			dispose();
 		}
 		if (e.getSource() == cancelButton){
 			dispose();
