@@ -1,5 +1,6 @@
 package FinalProject;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 
@@ -16,8 +17,11 @@ import java.awt.event.ActionEvent;
 
 import static FinalProject.PokeDex.PokemonIconDir;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.JSeparator;
 import java.awt.Dimension;
 import javax.swing.border.EtchedBorder;
@@ -31,6 +35,7 @@ import javax.swing.JTable;
 import java.awt.GridLayout;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 public class DetailDialog extends JDialog {
 	private JTextField txt1Hh;
@@ -327,17 +332,40 @@ public class DetailDialog extends JDialog {
 						} 
 						Relations[i] = null;
 
-						//						int k = 0;
-						//						while (RelationIDs[k] != -1){
-						//							System.out.println(Relations[k++][2]);
-						//						}
-
 						int nodeLevel = 0;
 						JTree tree = new JTree();
+						tree.setCellRenderer(new DefaultTreeCellRenderer() {
+							 private Icon loadIcon = UIManager.getIcon("OptionPane.errorIcon");
+					            private Icon saveIcon = UIManager.getIcon("OptionPane.informationIcon");
+							//new ImageIcon(PokemonIconDir+id+".png");
+				            @Override
+				            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean isLeaf, int row, boolean focused) {
+				                Component c = super.getTreeCellRendererComponent(tree, value,selected, expanded, isLeaf, row, focused);
+				                int cont = 0;
+				                //System.out.println();
+				                while (RelationIDs[cont] != -1){
+				                	//System.out.println((String)value);
+				                	if (((String)Relations[cont][2]).equals(value.toString())){
+				                		 System.out.println("asd");
+				                		setIcon(new ImageIcon(PokemonIconDir+Relations[cont][0]+".png"));
+				                		break;
+				                	}
+				                	cont++;
+				                }
+				               
+				              
+				                return c;
+				            }
+				        });
 						tree.setModel(new DefaultTreeModel(createNodes(0, Relations, RelationIDs, null)));
 						for (int q=0;q<tree.getRowCount();q++){
 							tree.expandRow(q);
 						}
+						
+						//tree.setCellRenderer(new DefaultTreeCellRenderer());
+						
+
+						
 						evolvInfo.add(tree, BorderLayout.CENTER);
 
 					} catch (SQLException e) {
@@ -369,7 +397,7 @@ public class DetailDialog extends JDialog {
 		//System.out.println("Create"+Relations[i][2]);
 		int counter = i;
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(Relations[counter++][2]);
-
+		//node.get
 		// next pokemon is different from current
 		if (RelationIDs[i] != RelationIDs[counter] && RelationIDs[counter] != -1){
 			createNodes(counter,  Relations, RelationIDs, node);
