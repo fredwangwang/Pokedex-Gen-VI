@@ -268,12 +268,13 @@ public class AdvSearch extends JDialog implements ActionListener {
 				} catch (SQLException sqlE) {
 					CommonUtils.sqlExceptionHandler(sqlE, this);
 				}
-
 				// 2. do intersection.
 				Set<Object[]> pokemon = new HashSet(DATAs.get(0));
+				System.out.println(pokemon.size());
 				for (int i=1;i<DATAs.size();i++){
-					pokemon.retainAll(DATAs.get(i));
+					pokemon.addAll(new HashSet(DATAs.get(i)));
 				}
+				System.out.println(pokemon.size());
 				model.setTable(new Vector<Object[]>(pokemon));
 
 			}
