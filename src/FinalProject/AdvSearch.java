@@ -66,14 +66,14 @@ public class AdvSearch extends JDialog implements ActionListener {
 	private JCheckBox typeChckbx;
 	private JComboBox typeCombo;
 
-	public static void main(String[] args) {
-		try {
-			AdvSearch dialog = new AdvSearch(null);
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			AdvSearch dialog = new AdvSearch(null);
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public AdvSearch(PokeTableModel m) {
 		model = m;
@@ -268,14 +268,55 @@ public class AdvSearch extends JDialog implements ActionListener {
 				} catch (SQLException sqlE) {
 					CommonUtils.sqlExceptionHandler(sqlE, this);
 				}
-				// 2. do intersection.
-				Set<Object[]> pokemon = new HashSet(DATAs.get(0));
-				System.out.println(pokemon.size());
-				for (int i=1;i<DATAs.size();i++){
-					pokemon.addAll(new HashSet(DATAs.get(i)));
+				
+				// 2. do intersection.				
+				// Thought this would work, why not?
+				//				Set<Object[]> pokemon = new HashSet(DATAs.get(0));
+				//				System.out.println(pokemon.size());
+				//				for (int i=1;i<DATAs.size();i++){
+				//					System.out.println(DATAs.get(i).size());
+				//					Set<Object[]> pokemon1 = new HashSet(DATAs.get(i));
+				//					pokemon.retainAll(pokemon1);
+				//					System.out.println(pokemon.size());
+				//				}
+				Set<Integer> BasePokemonID = new TreeSet<>();
+				for (Object[] row: DATAs.get(0)){
+					BasePokemonID.add((int) row[0]);
 				}
-				System.out.println(pokemon.size());
-				model.setTable(new Vector<Object[]>(pokemon));
+				List<Set<Integer>> ListPokemonID = new ArrayList<>();
+				for (int i=1;i<DATAs.size();i++){
+					Set<Integer> IDs = new TreeSet<>();
+					for (Object[] row: DATAs.get(i)){
+						IDs.add((int) row[0]);
+					}
+					ListPokemonID.add(IDs);
+				}
+				for (Set<Integer> IDs: ListPokemonID){
+					BasePokemonID.retainAll(IDs);
+				}
+				
+
+				// 3. map pokemons
+				Vector<Object[]> Pokemons = new Vector<>();
+				int minSetIdx = 999, minSetSize = 999;
+				for (Vector<Object[]> data: DATAs){
+					if (data.size() < minSetSize){
+						minSetIdx = DATAs.indexOf(data);
+						minSetSize = data.size();
+					}
+				}
+				for (int i: BasePokemonID){
+					for (Object[] row: DATAs.get(minSetIdx)){
+						if (i == (int)row[0]){
+							Pokemons.add(row);
+							break;
+						}
+					}
+				}
+								
+				// add pkmon
+				model.setTable(Pokemons);
+
 
 			}
 			dispose();
