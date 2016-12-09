@@ -247,12 +247,10 @@ public class AdvSearch extends JDialog implements ActionListener {
 				// 1. deal with each chckbx queries and store data
 				try {
 					if (typeChckbx.isSelected()){
-						System.out.println(types.get(1).get(typeCombo.getSelectedIndex()));
 						int typeID = (int) types.get(0).get(typeCombo.getSelectedIndex());
 						DATAs.add(model.getQualifiedPokemonBasedType(typeID));
 					}
 					if (statsChckbx.isSelected()) {
-						System.out.println(stats.get(1).get(statsCombo.getSelectedIndex()));
 						int statID = (int) stats.get(0).get(statsCombo.getSelectedIndex());
 						if (CommonUtils.isfieldReturnNumber(statsField, this)){
 							DATAs.add(model.getQualifiedPokemonBasedStatus(statID, CommonUtils.fieldNumber));
@@ -270,7 +268,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				} catch (SQLException sqlE) {
 					CommonUtils.sqlExceptionHandler(sqlE, this);
 				}
-
+				
 				// 2. do intersection.				
 				// Thought this would work, why not?
 				//				Set<Object[]> pokemon = new HashSet(DATAs.get(0));
