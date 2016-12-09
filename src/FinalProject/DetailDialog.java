@@ -357,7 +357,7 @@ public class DetailDialog extends JDialog {
 
 	// helper function 
 	private DefaultMutableTreeNode createNodes(int i, Object[][] Relations, int[] RelationIDs, DefaultMutableTreeNode upper){
-		//System.out.println("Create"+Relations[i][2]);
+		System.out.println("Create"+Relations[i][2]);
 		int counter = i;
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(Relations[counter++][2]);
 		

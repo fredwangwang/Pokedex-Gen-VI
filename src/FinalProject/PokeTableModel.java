@@ -334,16 +334,20 @@ public class PokeTableModel extends DefaultTableModel {
 		return formatPokemonResult(result);
 	}
 
-	//TODO
 	public Vector<Object[]> getQualifiedPokemonBasedType(int typeID) throws SQLException {
 		ResultSet result;
 
 		//NOTE: For this query we only return the given type since that seems
 		String query = 
-				"SELECT pt.pokemon_id, p.identifier, t.identifier "
-						+ "FROM pokemon_types AS pt, types AS t, pokemon_species AS p "
-						+ "WHERE t.id = " + typeID + " AND t.id = pt.type_id AND pt.pokemon_id = p.id "
-						+ "ORDER BY pt.pokemon_id ASC";
+
+				"SELECT p.id, p.identifier, t.identifier "
+		                + "FROM "
+		                + "(SELECT pt.pokemon_id "
+		                     + "FROM pokemon_types AS pt, types AS t, pokemon_species AS p "
+						     + "WHERE t.id = " + typeID + " AND t.id = pt.type_id AND pt.pokemon_id = p.id) AS x, "
+						+ "types AS t, pokemon_types AS pt, pokemon_species AS p "
+						+ "WHERE p.id = x.pokemon_id AND t.id = pt.type_id AND pt.pokemon_id = p.id "
+						+ "ORDER BY p.id ASC";
 
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
