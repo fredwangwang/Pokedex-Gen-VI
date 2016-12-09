@@ -231,10 +231,10 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 	public void valueChanged(ListSelectionEvent e) {
 		if (table.getSelectedRow() == -1)
 			detailButton.setEnabled(false);
-		else
+		else {
 			detailButton.setEnabled(true);
-
-		poketableModel.setSelectedRow(table.getSelectedRow());
+			poketableModel.setSelectedRow(table.convertRowIndexToModel(table.getSelectedRow()));
+		}		
 	}
 
 	@Override

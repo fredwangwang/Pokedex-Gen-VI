@@ -96,11 +96,6 @@ public class AdvSearch extends JDialog implements ActionListener, FocusListener 
 		{
 			// initialize type combo box
 			try {
-				// debug only
-				if (model == null){
-					model = new PokeTableModel();
-					model.login("huhwang", "Pokemon");
-				}
 				stats = model.getPokemonstats();
 				types = model.getPokemonTypes();
 			} 
@@ -109,9 +104,6 @@ public class AdvSearch extends JDialog implements ActionListener, FocusListener 
 			}
 			catch (NullPointerException e2){
 				System.out.println("Null pointer");
-			}
-			catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 
 			contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));

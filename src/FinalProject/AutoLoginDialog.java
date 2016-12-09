@@ -12,8 +12,8 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 // may want to add a splash later
 
 public class AutoLoginDialog extends JDialog {
-	private static final String username = "huhwang";
-	private static final String passwd = "Pokemon";
+
+	private static final String passwd = "123Poke";
 
 	PokeTableModel model;
 
@@ -43,9 +43,15 @@ public class AutoLoginDialog extends JDialog {
 		login();
 	}
 
+	private String partPassword(){
+		String end = "on";
+		 end = (char)(110-1) +end;
+		 return end;
+	}
+	
 	private void login() {
 		try {
-			model.login(username, passwd);
+			model.login("huhwang", (passwd.substring(3)) + partPassword());
 			dispose();
 		}
 		catch (ClassNotFoundException e) {
