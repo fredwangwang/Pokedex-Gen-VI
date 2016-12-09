@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -84,7 +85,8 @@ public class AdvSearch extends JDialog implements ActionListener, FocusListener 
 	}
 
 	private void Initialize() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+"0.png"));
+		URL url = PokeTableModel.class.getResource(PokemonIconDir+"0.png");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(url));
 		setTitle("Advance Search");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 300, 300);

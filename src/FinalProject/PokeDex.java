@@ -11,6 +11,7 @@ import sun.awt.image.ImageCache.PixelsKey;
 import java.awt.Toolkit;
 import javax.swing.JPanel;
 
+import static FinalProject.PokeDex.PokemonIconDir;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 import java.awt.BorderLayout;
@@ -45,6 +46,7 @@ import java.awt.Component;
 import javax.swing.JPopupMenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.sql.SQLException;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -54,7 +56,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 public class PokeDex implements ActionListener, ListSelectionListener, KeyListener{
-	public static final String PokemonIconDir = "data\\pokemon\\icons\\";
+	public static final String PokemonIconDir = "/data/pokemon/icons/";
 
 	private JFrame framePokedex;
 	private JTextField searchField;
@@ -102,7 +104,8 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 		framePokedex = new JFrame();
 		framePokedex.setResizable(false);
-		framePokedex.setIconImage(Toolkit.getDefaultToolkit().getImage("data\\icon\\dex.png"));
+		URL url = PokeTableModel.class.getResource("/data/icon/dex.png");
+		framePokedex.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
 		framePokedex.setTitle("Pokedex");
 
 		framePokedex.setBounds(100, 100, 400, 600);

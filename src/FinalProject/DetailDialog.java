@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTabbedPane;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Vector;
@@ -69,7 +70,8 @@ public class DetailDialog extends JDialog {
 
 	private void Initialize() {
 		setTitle("Detail Info - " + PokemonName + "  " + PokemonID);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+PokemonID+".png"));
+		URL url = PokeTableModel.class.getResource(PokemonIconDir + PokemonID+".png");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(url));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 319, 286);
 
@@ -335,8 +337,6 @@ public class DetailDialog extends JDialog {
 						int nodeLevel = 0;
 						JTree tree = new JTree();
 						tree.setCellRenderer(new DefaultTreeCellRenderer() {
-							 private Icon loadIcon = UIManager.getIcon("OptionPane.errorIcon");
-					            private Icon saveIcon = UIManager.getIcon("OptionPane.informationIcon");
 							//new ImageIcon(PokemonIconDir+id+".png");
 				            @Override
 				            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean isLeaf, int row, boolean focused) {
@@ -346,7 +346,8 @@ public class DetailDialog extends JDialog {
 				                while (RelationIDs[cont] != -1){
 				                	//System.out.println((String)value);
 				                	if (((String)Relations[cont][2]).equals(value.toString())){
-				                		setIcon(new ImageIcon(PokemonIconDir+Relations[cont][0]+".png"));
+				                		URL url = PokeTableModel.class.getResource(PokemonIconDir+Relations[cont][0]+".png");
+				                		setIcon(new ImageIcon(url));
 				                		break;
 				                	}
 				                	cont++;

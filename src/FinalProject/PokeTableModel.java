@@ -1,5 +1,6 @@
 package FinalProject;
 
+import java.net.URL;
 import java.sql.*;
 import java.util.*;
 
@@ -390,7 +391,8 @@ public class PokeTableModel extends DefaultTableModel {
 			if (id != lastid){
 				rowData = new Object[4];
 				rowData[0] = id;
-				rowData[1] = new ImageIcon(PokemonIconDir+id+".png");
+				URL url = PokeTableModel.class.getResource(PokemonIconDir + id+".png");
+				rowData[1] = new ImageIcon(url);
 				rowData[2] = CommonUtils.capitalize(res.getString(2));
 				rowData[3] = CommonUtils.capitalize(res.getString(3));
 				rows.add(rowData);
