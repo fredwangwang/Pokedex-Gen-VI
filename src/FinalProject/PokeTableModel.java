@@ -287,13 +287,13 @@ public class PokeTableModel extends DefaultTableModel {
 	public Vector<Object[]> getSelectedPokemonAncestor(int Pid) throws SQLException {
 		ResultSet result;
 		String query = 
-				"SELECT ps.evolves_from_species_id, p.identifier, t.identifier"
-						+ "FROM (SELECT evolves_from_species_id"
-						+ "FROM pokemon_species" 
+				"SELECT ps.evolves_from_species_id, p.identifier, t.identifier "
+						+ "FROM (SELECT evolves_from_species_id "
+						+ "FROM pokemon_species " 
 						+ "WHERE id = " + Pid + ") AS ps,"
 						+ "pokemon_species AS p,"
 						+ "pokemon_types AS pt,"
-						+ "types AS t"
+						+ "types AS t "
 						+ "WHERE ps.evolves_from_species_id = p.id AND p.id = pt.pokemon_id AND pt.type_id = t.id";
 
 		PreparedStatement ps = db.prepareStatement(query);
@@ -327,12 +327,12 @@ public class PokeTableModel extends DefaultTableModel {
 	public Vector<Object[]> getSelectedPokemonEvolvChain(int Pid) throws SQLException {
 		ResultSet result;
 		String query = 
-				"SELECT ps.id, ps.identifier, t.identifier"
-						+ "FROM  pokemon_species AS ps, pokemon_types AS pt, types AS t"
-						+ "WHERE ps.id<>" + Pid
-						+ "AND evolution_chain_id = (SELECT evolution_chain_id"
-						+ "FROM pokemon_species"
-						+ "WHERE id="+ Pid + ")"
+				"SELECT ps.id, ps.identifier, t.identifier "
+						+ "FROM  pokemon_species AS ps, pokemon_types AS pt, types AS t "
+						+ "WHERE ps.id<>" + Pid + " "
+						+ "AND evolution_chain_id = (SELECT evolution_chain_id "
+						+ "FROM pokemon_species "
+						+ "WHERE id="+ Pid + ") "
 						+ "AND ps.id = pt.pokemon_id AND pt.type_id = t.id";
 
 		PreparedStatement ps = db.prepareStatement(query);
