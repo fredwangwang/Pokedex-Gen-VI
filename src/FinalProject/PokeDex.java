@@ -194,31 +194,31 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		aboutMenu = new JMenuItem("About");
 		fileMenu.add(aboutMenu);
 		menuBar.add(fileMenu);
-		
+
 		aboutMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(framePokedex, "Our team consists of Huan Wang, Junquan Lin, Khanh Duong, and Michael Villafuerte. \n"
-															+ "Our mutual love for Pokemon and the game’s competitive scene led us to pursuing \n"
-															+ "this topic. As of right now, there is not an easily accessed database that contain \n"
-															+ "the quintessential informations a competitive player would need without all the \n"
-															+ "fluffs from a wikia. Our common interest made the project much more enjoyable and \n"
-															+ "not like a chore. A few sleepless night were had, but the end result was very worth \n"
-															+ "the effort. This database will live on past this project, which is not true for the \n"
-															+ "end product of most of our assignments. In the future, it would be very nice to open \n"
-															+ "up this database to the wider competitive Pokemon community.", "About", JOptionPane.INFORMATION_MESSAGE);
+						+ "Our mutual love for Pokemon and the game competitive scene led us to pursuing \n"
+						+ "this topic. As of right now, there is not an easily accessed database that contain \n"
+						+ "the quintessential informations a competitive player would need without all the \n"
+						+ "fluffs from a wikia. Our common interest made the project much more enjoyable and \n"
+						+ "not like a chore. A few sleepless night were had, but the end result was very worth \n"
+						+ "the effort. This database will live on past this project, which is not true for the \n"
+						+ "end product of most of our assignments. In the future, it would be very nice to open \n"
+						+ "up this database to the wider competitive Pokemon community.", "About", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
-//		typeEffectsItem = new JMenuItem("Type Effects");
-//		typeEffectsItem.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				//TODO
-//			}
-//		});
+		//		typeEffectsItem = new JMenuItem("Type Effects");
+		//		typeEffectsItem.addActionListener(new ActionListener() {
+		//			public void actionPerformed(ActionEvent e) {
+		//				//TODO
+		//			}
+		//		});
 		//fileMenu.add(typeEffectsItem);
 
-//		aboutMenu = new JMenuItem("About");
-//		menuBar.add(aboutMenu);
+		//		aboutMenu = new JMenuItem("About");
+		//		menuBar.add(aboutMenu);
 
 		try {
 			poketableModel.nameSearch(searchField.getText().trim());
