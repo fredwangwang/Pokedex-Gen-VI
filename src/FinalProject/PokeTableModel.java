@@ -367,9 +367,9 @@ public class PokeTableModel extends DefaultTableModel {
 
 		ResultSet result;
 		String query = 
-				"SELECT distinct ps.pokemon_id, p.identifier, t.identifier" 
-						+ "FROM pokemon_stats AS ps, stats AS s, pokemon_species AS p, pokemon_types AS pt, types AS t"
-						+ "WHERE s.id = " + statID + " AND ps.base_stat >= " + base +" AND ps.pokemon_id = p.id AND pt.pokemon_id = p.id AND pt.type_id = t.id"
+				"SELECT distinct ps.pokemon_id, p.identifier, t.identifier " 
+						+ "FROM pokemon_stats AS ps, stats AS s, pokemon_species AS p, pokemon_types AS pt, types AS t "
+						+ "WHERE s.id = " + statID + " AND ps.base_stat >= " + base +" AND ps.pokemon_id = p.id AND pt.pokemon_id = p.id AND pt.type_id = t.id "
 						+ "ORDER by ps.pokemon_id";
 
 		PreparedStatement ps = db.prepareStatement(query);

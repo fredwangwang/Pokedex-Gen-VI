@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -137,7 +138,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				flowLayout.setAlignment(FlowLayout.LEFT);
 				statsPanel.add(panel_1);
 
-				statsChckbx = new JCheckBox("stats: ");
+				statsChckbx = new JCheckBox("Stats: ");
 				statsChckbx.addActionListener(this);
 				panel_1.add(statsChckbx);
 				statsCombo = new JComboBox<String>(stats.elementAt(1));
@@ -233,7 +234,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 			else 
 				checkBoxCounter--;
 		}
-		System.out.println("action!" + checkBoxCounter);
+		//System.out.println("action!" + checkBoxCounter);
 		if (e.getSource() == okButton){
 			// which means no choice made, why bother making search?
 			if (checkBoxCounter == 0){
@@ -269,7 +270,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				}
 
 				// 2. do intersection.
-				Set<Object[]> pokemon = new TreeSet<>(DATAs.get(0));
+				Set<Object[]> pokemon = new HashSet(DATAs.get(0));
 				for (int i=1;i<DATAs.size();i++){
 					pokemon.retainAll(DATAs.get(i));
 				}
