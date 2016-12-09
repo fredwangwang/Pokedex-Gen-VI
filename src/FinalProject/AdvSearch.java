@@ -160,7 +160,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				flowLayout.setAlignment(FlowLayout.LEFT);
 				statsPanel.add(panel_2);
 				{
-					sumChckbx = new JCheckBox("Status sum > ");
+					sumChckbx = new JCheckBox("Stats sum > ");
 					sumChckbx.addActionListener(this);
 					panel_2.add(sumChckbx);
 				}
