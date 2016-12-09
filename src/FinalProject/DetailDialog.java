@@ -10,6 +10,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTabbedPane;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 
 import static FinalProject.PokeDex.PokemonIconDir;
@@ -27,6 +29,8 @@ import javax.swing.JTree;
 import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import java.awt.GridLayout;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class DetailDialog extends JDialog {
 	private JTextField txt1Hh;
@@ -44,6 +48,7 @@ public class DetailDialog extends JDialog {
 	private String PokemonType;
 	private JTextField txtHh;
 
+	private Vector<Object[]> evlovChain;
 
 	//
 
@@ -254,8 +259,84 @@ public class DetailDialog extends JDialog {
 			{
 				JPanel evolvInfo = new JPanel();
 				InfoTabPanel.addTab("Evolution", null, evolvInfo, null);
+				evolvInfo.setLayout(new BorderLayout(0, 0));
+				{
+					try {
+						evlovChain = model.getSelectedPokemonEvolvChain();
+						Object[][] Relations = new Object[20][];
+						int[] RelationIDs = new int[20];
+						for (int i= 0;i<20;i++){
+							RelationIDs[i] = -1;
+						}
+
+						int i= 0;
+						int Relc = 0;
+						int ancestorID;
+						Iterator<Object[]> evlovChainItr = evlovChain.iterator();
+						
+						// first
+						evlovChainItr = evlovChain.iterator();
+						while (evlovChainItr.hasNext()){
+							Relations[i] = evlovChainItr.next();
+							Object[] ancestor = model.getGivenPokemonAncestor((int) Relations[i][0]);
+							//  means he's the daddy
+							if (ancestor == null){
+								//ancestorID = Relations[i][0];
+//								System.out.println(Relations[i][2]);
+//								System.out.println(Relations[i][0]);
+								RelationIDs[i] = 0;
+								i++; Relc++;
+								evlovChainItr.remove();
+							}
+						}
+						// second
+						evlovChainItr = evlovChain.iterator();
+						while (evlovChainItr.hasNext()){
+							Relations[i] = evlovChainItr.next();
+							Relations[i+1] = model.getGivenPokemonAncestor((int) Relations[i][0]);
+							//System.out.println(Relations[i+1][0]);
+							if ((int)Relations[i+1][0] == (int)Relations[0][0]){
+								RelationIDs[i] = RelationIDs[0] + 1;
+								i++;
+								evlovChainItr.remove();
+							}
+							Relations[i] = null;
+						}
 				
+//						// third
+						evlovChainItr = evlovChain.iterator();
+						while (evlovChainItr.hasNext()){
+							Relations[i] = evlovChainItr.next();
+							Relations[i+1] = model.getGivenPokemonAncestor((int) Relations[i][0]);
+							int term = (i-1);
+							for (int j = 1;j<=term;j++){
+								if ((int)Relations[i+1][0] == (int)Relations[j][0]){
+									RelationIDs[i] = RelationIDs[j] + 1;
+									i++;
+									evlovChainItr.remove();
+								}
+								Relations[i] = null;
+							}	
+							
+						} 
+						Relations[i] = null;
 				
+//						int k = 0;
+//						while (RelationIDs[k] != -1){
+//							System.out.println(Relations[k++][2]);
+//						}
+						
+						int nodeLevel = 0;
+						JTree tree = new JTree();
+						tree.setModel(new DefaultTreeModel(createNodes(0, Relations, RelationIDs, null)));
+						evolvInfo.add(tree, BorderLayout.CENTER);
+
+					} catch (SQLException e) {
+						CommonUtils.sqlExceptionHandler(e, this);
+					}
+				}
+
+
 			}
 		}
 
@@ -274,4 +355,24 @@ public class DetailDialog extends JDialog {
 
 	}
 
+	// helper function 
+	private DefaultMutableTreeNode createNodes(int i, Object[][] Relations, int[] RelationIDs, DefaultMutableTreeNode upper){
+		//System.out.println("Create"+Relations[i][2]);
+		int counter = i;
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(Relations[counter++][2]);
+		
+		// next pokemon is different from current
+		if (RelationIDs[i] != RelationIDs[counter] && RelationIDs[counter] != -1){
+			createNodes(counter,  Relations, RelationIDs, node);
+		}
+		else if (RelationIDs[i] == RelationIDs[counter] ){
+			createNodes(counter,  Relations, RelationIDs, upper);
+		}
+		
+		if (upper != null){
+			upper.add(node);
+		}
+		
+		return node;
+	}
 }
