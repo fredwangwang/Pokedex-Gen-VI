@@ -346,7 +346,6 @@ public class DetailDialog extends JDialog {
 				                while (RelationIDs[cont] != -1){
 				                	//System.out.println((String)value);
 				                	if (((String)Relations[cont][2]).equals(value.toString())){
-				                		 System.out.println("asd");
 				                		setIcon(new ImageIcon(PokemonIconDir+Relations[cont][0]+".png"));
 				                		break;
 				                	}
