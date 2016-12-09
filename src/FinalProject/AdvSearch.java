@@ -94,7 +94,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 					model = new PokeTableModel();
 					model.login("huhwang", "Pokemon");
 				}
-				stats = model.getPokemonStatus();
+				stats = model.getPokemonstats();
 				types = model.getPokemonTypes();
 			} 
 			catch (SQLException e1) {
@@ -126,7 +126,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 			}
 
 			statsPanel = new JPanel();
-			statsPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Status", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+			statsPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "stats", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 			contentPanel.add(statsPanel);
 			statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
 			{
@@ -135,7 +135,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				flowLayout.setAlignment(FlowLayout.LEFT);
 				statsPanel.add(panel_1);
 
-				statsChckbx = new JCheckBox("Status: ");
+				statsChckbx = new JCheckBox("stats: ");
 				statsChckbx.addActionListener(this);
 				panel_1.add(statsChckbx);
 				statsCombo = new JComboBox<String>(stats.elementAt(1));

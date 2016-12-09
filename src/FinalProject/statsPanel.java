@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 
 // DONE
-public class statusPanel extends JPanel {
+public class statsPanel extends JPanel {
 	private static final int START_X = 10;
 	private static final int START_Y = 20;
 	private static final int OFFSET_Y = 25;
@@ -22,7 +22,7 @@ public class statusPanel extends JPanel {
 	private String[] statsName = {"HP: ","Attack: ","Defense: ", "Sp.Atk: ","Sp.Def: ","Speed: "};
 	private Color[] statsColor = {Color.RED, Color.ORANGE, Color.YELLOW, Color.BLUE,Color.GREEN, Color.MAGENTA};
 
-	public statusPanel(PokeTableModel model) {
+	public statsPanel(PokeTableModel model) {
 		this.model = model;
 		initialize();
 	}
@@ -31,7 +31,7 @@ public class statusPanel extends JPanel {
 		// Set the size and do the query
 		setPreferredSize(new Dimension(250, 200));
 		try {
-			stats = model.getSelectedPokemonStatus();
+			stats = model.getSelectedPokemonstats();
 		} catch (SQLException e) {
 			CommonUtils.sqlExceptionHandler(e, this);
 		}
