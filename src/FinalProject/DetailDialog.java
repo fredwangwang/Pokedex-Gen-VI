@@ -254,6 +254,8 @@ public class DetailDialog extends JDialog {
 			{
 				JPanel evolvInfo = new JPanel();
 				InfoTabPanel.addTab("Evolution", null, evolvInfo, null);
+				
+				
 			}
 		}
 

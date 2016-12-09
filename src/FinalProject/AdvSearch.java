@@ -14,6 +14,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,7 +37,7 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import java.awt.Color;
 
-public class AdvSearch extends JDialog implements ActionListener {
+public class AdvSearch extends JDialog implements ActionListener, FocusListener {
 
 	private final JPanel contentPanel = new JPanel();
 	private PokeTableModel model;
@@ -150,6 +152,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				}
 				{
 					statsField = new JTextField();
+					statsField.addFocusListener(this);
 					panel_1.add(statsField);
 					statsField.setColumns(3);
 				}
@@ -166,6 +169,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				}
 				{
 					sumField = new JTextField();
+					sumField.addFocusListener(this);
 					panel_2.add(sumField);
 					sumField.setColumns(3);
 				}
@@ -203,6 +207,9 @@ public class AdvSearch extends JDialog implements ActionListener {
 	// TODO
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == statsField){
+			System.out.println("statsfield");
+		}
 		if (e.getSource() == typeChckbx){
 			if (typeChckbx.isSelected()){
 				checkBoxCounter++;
@@ -323,6 +330,28 @@ public class AdvSearch extends JDialog implements ActionListener {
 		}
 		if (e.getSource() == cancelButton){
 			dispose();
+		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if (e.getSource() == sumField){
+			if (CommonUtils.isfieldReturnNumber(sumField, this)){
+				sumChckbx.setSelected(true);
+				checkBoxCounter++;
+			}
+		}
+		if (e.getSource() == statsField){
+			if (CommonUtils.isfieldReturnNumber(statsField, this)){
+				statsChckbx.setSelected(true);
+				checkBoxCounter++;
+			}
 		}
 	}
 }
