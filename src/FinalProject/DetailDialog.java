@@ -282,8 +282,8 @@ public class DetailDialog extends JDialog {
 							//  means he's the daddy
 							if (ancestor == null){
 								//ancestorID = Relations[i][0];
-//								System.out.println(Relations[i][2]);
-//								System.out.println(Relations[i][0]);
+								System.out.println(Relations[i][2]);
+								System.out.println(Relations[i][0]);
 								RelationIDs[i] = 0;
 								i++; Relc++;
 								evlovChainItr.remove();
@@ -329,6 +329,9 @@ public class DetailDialog extends JDialog {
 						int nodeLevel = 0;
 						JTree tree = new JTree();
 						tree.setModel(new DefaultTreeModel(createNodes(0, Relations, RelationIDs, null)));
+						for (int q=0;q<tree.getRowCount();q++){
+							tree.expandRow(q);
+						}
 						evolvInfo.add(tree, BorderLayout.CENTER);
 
 					} catch (SQLException e) {
