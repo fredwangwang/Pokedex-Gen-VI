@@ -247,11 +247,11 @@ public class AdvSearch extends JDialog implements ActionListener {
 				// 1. deal with each chckbx queries and store data
 				try {
 					if (typeChckbx.isSelected()){
-						int typeID = (int) types.get(typeCombo.getSelectedIndex()).get(0);
+						int typeID = (int) types.get(0).get(typeCombo.getSelectedIndex());
 						DATAs.add(model.getQualifiedPokemonBasedType(typeID));
 					}
 					if (statsChckbx.isSelected()){
-						int statID = (int) stats.get(statsCombo.getSelectedIndex()).get(0);
+						int statID = (int) stats.get(0).get(statsCombo.getSelectedIndex());
 						if (CommonUtils.isfieldReturnNumber(statsField, this)){
 							DATAs.add(model.getQualifiedPokemonBasedStatus(statID, CommonUtils.fieldNumber));
 						}

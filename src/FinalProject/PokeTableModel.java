@@ -404,9 +404,10 @@ public class PokeTableModel extends DefaultTableModel {
 
 		//NOTE: For this query we only return the given type since that seems
 		String query = 
-				"SELECT pt.pokemon_id, p.identifier, t.identifier " 
-						+ "FROM pokemon_types AS pt, types AS t, pokemon_species AS p "
-						+ "WHERE t.id = " + typeID + " AND t.id = pt.type_id AND pt.pokemon_id = p.id";
+				"SELECT pt.pokemon_id, p.identifier, t.identifier "
+		                + "FROM pokemon_types AS pt, types AS t, pokemon_species AS p "
+						+ "WHERE t.id = " + typeID + " AND t.id = pt.type_id AND pt.pokemon_id = p.id "
+						+ "ORDER BY pt.pokemon_id ASC";
 
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
