@@ -180,18 +180,11 @@ public class AdvSearch extends JDialog implements ActionListener, FocusListener 
 			}
 		}
 		pack();
-		setVisible(true);
+		//setVisible(true);
 	}
 
-	//	private void addAButton(String text, Container container) {
-	//		JButton button = new JButton(text);
-	//		button.setAlignmentX(Component.CENTER_ALIGNMENT);
-	//		container.add(button);
-	//	}
-
-	// TODO
-	public void show(){
-		//setVisible(true);
+	public void open(){
+		setVisible(true);
 	}
 	
 	@Override

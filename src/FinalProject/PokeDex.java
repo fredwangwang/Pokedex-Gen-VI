@@ -158,7 +158,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		advSearchButton = new JButton("Adv. Search");
 		advSearchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				advSearch.show();
+				advSearch.open();
 			}
 		});
 		ControlPanel.add(advSearchButton);
