@@ -66,14 +66,14 @@ public class AdvSearch extends JDialog implements ActionListener {
 	private JCheckBox typeChckbx;
 	private JComboBox typeCombo;
 
-	public static void main(String[] args) {
-		try {
-			AdvSearch dialog = new AdvSearch(null);
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			AdvSearch dialog = new AdvSearch(null);
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public AdvSearch(PokeTableModel m) {
 		model = m;
