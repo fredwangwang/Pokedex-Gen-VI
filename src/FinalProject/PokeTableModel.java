@@ -29,10 +29,10 @@ public class PokeTableModel extends DefaultTableModel {
 		this.setColumnIdentifiers(columns);
 	}
 
-	public void login(String username, String password) throws SQLException, ClassNotFoundException {
-		Class.forName("org.postgresql.Driver");
-		String connectString = "jdbc:postgresql://flowers.mines.edu/csci403";
-		db = DriverManager.getConnection(connectString, username, password);
+	public void login() throws SQLException, ClassNotFoundException {
+		Class.forName("org.sqlite.JDBC");
+		URL url = getClass().getResource("/data/db/veekun-pokedex.sqlite");
+		db = DriverManager.getConnection("jdbc:sqlite::resource:" + url);
 	}
 
 	public void setSelectedRow(int selectedRow) {
@@ -321,14 +321,14 @@ public class PokeTableModel extends DefaultTableModel {
 		ResultSet result;
 		String query = 
 				"SELECT p.pokemon_id, ps.identifier, t.identifier " 
-						+ "FROM (select pokemon_id, sum(base_stat) " 
+						+ "FROM (select pokemon_id, sum(base_stat) AS SUM " 
 						+ "FROM pokemon_stats " 
 						+ "GROUP BY pokemon_id " 
 						+ "ORDER BY pokemon_id asc) AS p, "
 						+ "pokemon_species AS ps, "
 						+ "types AS t, "
 						+ "pokemon_types AS pt "
-						+ "WHERE sum >= " + sum + " AND ps.id = p.pokemon_id AND pt.pokemon_id = p.pokemon_id AND pt.type_id = t.id";
+						+ "WHERE SUM >= " + sum + " AND ps.id = p.pokemon_id AND pt.pokemon_id = p.pokemon_id AND pt.type_id = t.id";
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 

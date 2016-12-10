@@ -62,7 +62,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 	private JTextField searchField;
 
 	private PokeTableModel poketableModel;
-	private AutoLoginDialog login;
+	private AdvSearch advSearch;
 
 	// Widgets
 	private JMenuBar menuBar;
@@ -98,9 +98,16 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 	private void initialize() {
 		poketableModel = new PokeTableModel();
-
-		login = new AutoLoginDialog(poketableModel);
-		login.open();
+		try {
+			poketableModel.login();
+		} catch (ClassNotFoundException e2) {
+			CommonUtils.classNotFoundExceptionHandler(e2, framePokedex);
+			System.exit(1);
+		} catch (SQLException e2) {
+			CommonUtils.sqlExceptionHandler(e2, framePokedex);
+		}
+		
+		advSearch = new AdvSearch(poketableModel);
 
 		framePokedex = new JFrame();
 		framePokedex.setResizable(false);
@@ -151,7 +158,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		advSearchButton = new JButton("Adv. Search");
 		advSearchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AdvSearch advSearch = new AdvSearch(poketableModel);
+				advSearch.show();
 			}
 		});
 		ControlPanel.add(advSearchButton);

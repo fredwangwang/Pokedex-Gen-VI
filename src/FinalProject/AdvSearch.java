@@ -69,15 +69,6 @@ public class AdvSearch extends JDialog implements ActionListener, FocusListener 
 	private JCheckBox typeChckbx;
 	private JComboBox typeCombo;
 
-//	public static void main(String[] args) {
-//		try {
-//			AdvSearch dialog = new AdvSearch(null);
-//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	public AdvSearch(PokeTableModel m) {
 		model = m;
 		checkBoxCounter = 0;
@@ -88,7 +79,7 @@ public class AdvSearch extends JDialog implements ActionListener, FocusListener 
 		URL url = PokeTableModel.class.getResource(PokemonIconDir+"0.png");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(url));
 		setTitle("Advance Search");
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		setBounds(100, 100, 300, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -199,6 +190,10 @@ public class AdvSearch extends JDialog implements ActionListener, FocusListener 
 	//	}
 
 	// TODO
+	public void show(){
+		//setVisible(true);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == statsField){
@@ -320,10 +315,10 @@ public class AdvSearch extends JDialog implements ActionListener, FocusListener 
 
 
 			}
-			dispose();
+			setVisible(false);
 		}
 		if (e.getSource() == cancelButton){
-			dispose();
+			setVisible(false);
 		}
 	}
 
