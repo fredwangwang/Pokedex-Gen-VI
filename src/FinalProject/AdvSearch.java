@@ -14,6 +14,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,7 +38,7 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import java.awt.Color;
 
-public class AdvSearch extends JDialog implements ActionListener {
+public class AdvSearch extends JDialog implements ActionListener, FocusListener {
 
 	private final JPanel contentPanel = new JPanel();
 	private PokeTableModel model;
@@ -66,15 +69,6 @@ public class AdvSearch extends JDialog implements ActionListener {
 	private JCheckBox typeChckbx;
 	private JComboBox typeCombo;
 
-//	public static void main(String[] args) {
-//		try {
-//			AdvSearch dialog = new AdvSearch(null);
-//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	public AdvSearch(PokeTableModel m) {
 		model = m;
 		checkBoxCounter = 0;
@@ -82,9 +76,10 @@ public class AdvSearch extends JDialog implements ActionListener {
 	}
 
 	private void Initialize() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(PokemonIconDir+"0.png"));
+		URL url = PokeTableModel.class.getResource(PokemonIconDir+"0.png");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(url));
 		setTitle("Advance Search");
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		setBounds(100, 100, 300, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -92,11 +87,6 @@ public class AdvSearch extends JDialog implements ActionListener {
 		{
 			// initialize type combo box
 			try {
-				// debug only
-				if (model == null){
-					model = new PokeTableModel();
-					model.login("huhwang", "Pokemon");
-				}
 				stats = model.getPokemonstats();
 				types = model.getPokemonTypes();
 			} 
@@ -105,9 +95,6 @@ public class AdvSearch extends JDialog implements ActionListener {
 			}
 			catch (NullPointerException e2){
 				System.out.println("Null pointer");
-			}
-			catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 
 			contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
@@ -150,6 +137,7 @@ public class AdvSearch extends JDialog implements ActionListener {
 				}
 				{
 					statsField = new JTextField();
+					statsField.addFocusListener(this);
 					panel_1.add(statsField);
 					statsField.setColumns(3);
 				}
@@ -160,12 +148,13 @@ public class AdvSearch extends JDialog implements ActionListener {
 				flowLayout.setAlignment(FlowLayout.LEFT);
 				statsPanel.add(panel_2);
 				{
-					sumChckbx = new JCheckBox("Status sum > ");
+					sumChckbx = new JCheckBox("Stats sum > ");
 					sumChckbx.addActionListener(this);
 					panel_2.add(sumChckbx);
 				}
 				{
 					sumField = new JTextField();
+					sumField.addFocusListener(this);
 					panel_2.add(sumField);
 					sumField.setColumns(3);
 				}
@@ -201,8 +190,15 @@ public class AdvSearch extends JDialog implements ActionListener {
 	//	}
 
 	// TODO
+	public void show(){
+		//setVisible(true);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == statsField){
+			System.out.println("statsfield");
+		}
 		if (e.getSource() == typeChckbx){
 			if (typeChckbx.isSelected()){
 				checkBoxCounter++;
@@ -247,11 +243,11 @@ public class AdvSearch extends JDialog implements ActionListener {
 				// 1. deal with each chckbx queries and store data
 				try {
 					if (typeChckbx.isSelected()){
-						int typeID = (int) types.get(typeCombo.getSelectedIndex()).get(0);
+						int typeID = (int) types.get(0).get(typeCombo.getSelectedIndex());
 						DATAs.add(model.getQualifiedPokemonBasedType(typeID));
 					}
-					if (statsChckbx.isSelected()){
-						int statID = (int) stats.get(statsCombo.getSelectedIndex()).get(0);
+					if (statsChckbx.isSelected()) {
+						int statID = (int) stats.get(0).get(statsCombo.getSelectedIndex());
 						if (CommonUtils.isfieldReturnNumber(statsField, this)){
 							DATAs.add(model.getQualifiedPokemonBasedStatus(statID, CommonUtils.fieldNumber));
 						}
@@ -268,19 +264,83 @@ public class AdvSearch extends JDialog implements ActionListener {
 				} catch (SQLException sqlE) {
 					CommonUtils.sqlExceptionHandler(sqlE, this);
 				}
-
-				// 2. do intersection.
-				Set<Object[]> pokemon = new HashSet(DATAs.get(0));
-				for (int i=1;i<DATAs.size();i++){
-					pokemon.retainAll(DATAs.get(i));
+				
+				// 2. do intersection.				
+				// Thought this would work, why not?
+				//				Set<Object[]> pokemon = new HashSet(DATAs.get(0));
+				//				System.out.println(pokemon.size());
+				//				for (int i=1;i<DATAs.size();i++){
+				//					System.out.println(DATAs.get(i).size());
+				//					Set<Object[]> pokemon1 = new HashSet(DATAs.get(i));
+				//					pokemon.retainAll(pokemon1);
+				//					System.out.println(pokemon.size());
+				//				}
+				Set<Integer> BasePokemonID = new TreeSet<>();
+				for (Object[] row: DATAs.get(0)){
+					BasePokemonID.add((int) row[0]);
 				}
-				model.setTable(new Vector<Object[]>(pokemon));
+				List<Set<Integer>> ListPokemonID = new ArrayList<>();
+				for (int i=1;i<DATAs.size();i++){
+					Set<Integer> IDs = new TreeSet<>();
+					for (Object[] row: DATAs.get(i)){
+						IDs.add((int) row[0]);
+					}
+					ListPokemonID.add(IDs);
+				}
+				for (Set<Integer> IDs: ListPokemonID){
+					BasePokemonID.retainAll(IDs);
+				}
+				
+
+				// 3. map pokemons
+				Vector<Object[]> Pokemons = new Vector<>();
+				int minSetIdx = 999, minSetSize = 999;
+				for (Vector<Object[]> data: DATAs){
+					if (data.size() < minSetSize){
+						minSetIdx = DATAs.indexOf(data);
+						minSetSize = data.size();
+					}
+				}
+				for (int i: BasePokemonID){
+					for (Object[] row: DATAs.get(minSetIdx)){
+						if (i == (int)row[0]){
+							Pokemons.add(row);
+							break;
+						}
+					}
+				}
+								
+				// add pkmon
+				model.setTable(Pokemons);
+
 
 			}
-			dispose();
+			setVisible(false);
 		}
 		if (e.getSource() == cancelButton){
-			dispose();
+			setVisible(false);
+		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if (e.getSource() == sumField){
+			if (CommonUtils.isfieldReturnNumber(sumField, this)){
+				sumChckbx.setSelected(true);
+				checkBoxCounter++;
+			}
+		}
+		if (e.getSource() == statsField){
+			if (CommonUtils.isfieldReturnNumber(statsField, this)){
+				statsChckbx.setSelected(true);
+				checkBoxCounter++;
+			}
 		}
 	}
 }

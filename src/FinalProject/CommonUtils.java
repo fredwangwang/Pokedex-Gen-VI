@@ -18,10 +18,17 @@ public class CommonUtils {
 		return Character.toUpperCase(str.charAt(0)) + str.substring(1);
 	}
 
-	public static void sqlExceptionHandler(SQLException e, Component parentComponent) {
-		JOptionPane.showMessageDialog(parentComponent,
+	public static void sqlExceptionHandler(SQLException e, Component com) {
+		JOptionPane.showMessageDialog(com,
 				"Database error: " + e.getMessage(),
 				"Database error",
+				ERROR_MESSAGE);
+	}
+	
+	public static void classNotFoundExceptionHandler(ClassNotFoundException e, Component com){
+		JOptionPane.showMessageDialog(com,
+				"Error: " + e.getMessage(),
+				"Class not found",
 				ERROR_MESSAGE);
 	}
 

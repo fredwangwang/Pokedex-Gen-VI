@@ -1,5 +1,6 @@
 package FinalProject;
 
+import java.net.URL;
 import java.sql.*;
 import java.util.*;
 
@@ -28,10 +29,10 @@ public class PokeTableModel extends DefaultTableModel {
 		this.setColumnIdentifiers(columns);
 	}
 
-	public void login(String username, String password) throws SQLException, ClassNotFoundException {
-		Class.forName("org.postgresql.Driver");
-		String connectString = "jdbc:postgresql://flowers.mines.edu/csci403";
-		db = DriverManager.getConnection(connectString, username, password);
+	public void login() throws SQLException, ClassNotFoundException {
+		Class.forName("org.sqlite.JDBC");
+		URL url = getClass().getResource("/data/db/veekun-pokedex.sqlite");
+		db = DriverManager.getConnection("jdbc:sqlite::resource:" + url);
 	}
 
 	public void setSelectedRow(int selectedRow) {
@@ -284,92 +285,29 @@ public class PokeTableModel extends DefaultTableModel {
 		return stats;
 	}
 
-	public Vector<Object[]> getSelectedPokemonAncestor(int Pid) throws SQLException {
+	public Vector<Object[]> getSelectedPokemonEvolvChain() throws SQLException {
+		int Pid = getSelectedPokemonID();
 		ResultSet result;
 		String query = 
-				"SELECT ps.evolves_from_species_id, p.identifier, t.identifier"
-						+ "FROM (SELECT evolves_from_species_id"
-						+ "FROM pokemon_species" 
-						+ "WHERE id = " + Pid + ") AS ps,"
-						+ "pokemon_species AS p,"
-						+ "pokemon_types AS pt,"
-						+ "types AS t"
-						+ "WHERE ps.evolves_from_species_id = p.id AND p.id = pt.pokemon_id AND pt.type_id = t.id";
-
-		PreparedStatement ps = db.prepareStatement(query);
-		result =  ps.executeQuery();
-
-		int id = -1, lastid = -1;
-		Vector<Object[]> rows = new Vector<>();
-		Object rowData[] = new Object[3];
-
-		while (result.next()){
-			id = result.getInt(1);
-			// Means same pokemon with different type
-			if (id != lastid){
-				rowData = new Object[4];
-				rowData[0] = id;
-				rowData[1] = CommonUtils.capitalize(result.getString(2));
-				rowData[2] = CommonUtils.capitalize(result.getString(3));
-				rows.add(rowData);
-				lastid = id;
-			}
-			else {
-				String types = (rows.lastElement()[2]) + ", " + CommonUtils.capitalize(result.getString(2));
-				rowData[2] = types;
-				rows.set(rows.size()-1, rowData);
-			}
-		}
-
-		return rows;
-	}
-
-	public Vector<Object[]> getSelectedPokemonEvolvChain(int Pid) throws SQLException {
-		ResultSet result;
-		String query = 
-				"SELECT ps.id, ps.identifier, t.identifier"
-						+ "FROM  pokemon_species AS ps, pokemon_types AS pt, types AS t"
-						+ "WHERE ps.id<>" + Pid
-						+ "AND evolution_chain_id = (SELECT evolution_chain_id"
-						+ "FROM pokemon_species"
-						+ "WHERE id="+ Pid + ")"
+				"SELECT ps.id, ps.identifier, t.identifier "
+						+ "FROM  pokemon_species AS ps, pokemon_types AS pt, types AS t "
+						+ "WHERE evolution_chain_id = (SELECT evolution_chain_id "
+						+ "FROM pokemon_species "
+						+ "WHERE id="+ Pid + ") "
 						+ "AND ps.id = pt.pokemon_id AND pt.type_id = t.id";
 
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 
-		int id = -1, lastid = -1;
-		Vector<Object[]> rows = new Vector<>();
-		Object rowData[] = new Object[3];
-
-		while (result.next()){
-			id = result.getInt(1);
-			// Means same pokemon with different type
-			if (id != lastid){
-				rowData = new Object[4];
-				rowData[0] = id;
-				rowData[1] = CommonUtils.capitalize(result.getString(2));
-				rowData[2] = CommonUtils.capitalize(result.getString(3));
-				rows.add(rowData);
-				lastid = id;
-			}
-			else {
-				String types = (rows.lastElement()[2]) + ", " + CommonUtils.capitalize(result.getString(2));
-				rowData[2] = types;
-				rows.set(rows.size()-1, rowData);
-			}
-		}
-
-		return rows;
+		return formatPokemonResult(result);
 	}
 
 	public Vector<Object[]> getQualifiedPokemonBasedStatus(int statID, int base) throws SQLException {
-
 		ResultSet result;
 		String query = 
 				"SELECT distinct ps.pokemon_id, p.identifier, t.identifier " 
 						+ "FROM pokemon_stats AS ps, stats AS s, pokemon_species AS p, pokemon_types AS pt, types AS t "
-						+ "WHERE s.id = " + statID + " AND ps.base_stat >= " + base +" AND ps.pokemon_id = p.id AND pt.pokemon_id = p.id AND pt.type_id = t.id "
+						+ "WHERE s.id = " + statID + " AND ps.stat_id = s.id AND ps.base_stat >= " + base +" AND ps.pokemon_id = p.id AND pt.pokemon_id = p.id AND pt.type_id = t.id "
 						+ "ORDER by ps.pokemon_id";
 
 		PreparedStatement ps = db.prepareStatement(query);
@@ -378,40 +316,67 @@ public class PokeTableModel extends DefaultTableModel {
 		return formatPokemonResult(result);
 	}
 
-
 	public Vector<Object[]> getQualifiedPokemonStatusSum(int sum) throws SQLException {
 
 		ResultSet result;
 		String query = 
 				"SELECT p.pokemon_id, ps.identifier, t.identifier " 
-						+ "FROM (select pokemon_id, sum(base_stat) " 
+						+ "FROM (select pokemon_id, sum(base_stat) AS SUM " 
 						+ "FROM pokemon_stats " 
 						+ "GROUP BY pokemon_id " 
 						+ "ORDER BY pokemon_id asc) AS p, "
 						+ "pokemon_species AS ps, "
 						+ "types AS t, "
 						+ "pokemon_types AS pt "
-						+ "WHERE sum >= " + sum + " AND ps.id = p.pokemon_id AND pt.pokemon_id = p.pokemon_id AND pt.type_id = t.id";
+						+ "WHERE SUM >= " + sum + " AND ps.id = p.pokemon_id AND pt.pokemon_id = p.pokemon_id AND pt.type_id = t.id";
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 
 		return formatPokemonResult(result);
 	}
 
-	//TODO
 	public Vector<Object[]> getQualifiedPokemonBasedType(int typeID) throws SQLException {
 		ResultSet result;
 
 		//NOTE: For this query we only return the given type since that seems
 		String query = 
-				"SELECT pt.pokemon_id, p.identifier, t.identifier " 
-						+ "FROM pokemon_types AS pt, types AS t, pokemon_species AS p "
-						+ "WHERE t.id = " + typeID + " AND t.id = pt.type_id AND pt.pokemon_id = p.id";
+
+				"SELECT p.id, p.identifier, t.identifier "
+		                + "FROM "
+		                + "(SELECT pt.pokemon_id "
+		                     + "FROM pokemon_types AS pt, types AS t, pokemon_species AS p "
+						     + "WHERE t.id = " + typeID + " AND t.id = pt.type_id AND pt.pokemon_id = p.id) AS x, "
+						+ "types AS t, pokemon_types AS pt, pokemon_species AS p "
+						+ "WHERE p.id = x.pokemon_id AND t.id = pt.type_id AND pt.pokemon_id = p.id "
+						+ "ORDER BY p.id ASC";
 
 		PreparedStatement ps = db.prepareStatement(query);
 		result =  ps.executeQuery();
 
 		return formatPokemonResult(result);
+	}
+
+	public Object[] getGivenPokemonAncestor(int Pid) throws SQLException {
+		ResultSet result;
+		String query = 
+				"SELECT ps.evolves_from_species_id, p.identifier, t.identifier "
+						+ "FROM (SELECT evolves_from_species_id "
+						+ "FROM pokemon_species " 
+						+ "WHERE id = " + Pid + ") AS ps,"
+						+ "pokemon_species AS p,"
+						+ "pokemon_types AS pt,"
+						+ "types AS t "
+						+ "WHERE ps.evolves_from_species_id = p.id AND p.id = pt.pokemon_id AND pt.type_id = t.id";
+
+		PreparedStatement ps = db.prepareStatement(query);
+		result =  ps.executeQuery();
+
+		Vector<Object[]> pokemon= formatPokemonResult(result);
+		//System.out.println(pokemon.size());
+		if (pokemon.size() == 0){
+			return null;
+		}
+		return pokemon.get(0);
 	}
 
 	// helper func
@@ -426,7 +391,8 @@ public class PokeTableModel extends DefaultTableModel {
 			if (id != lastid){
 				rowData = new Object[4];
 				rowData[0] = id;
-				rowData[1] = new ImageIcon(PokemonIconDir+id+".png");
+				URL url = PokeTableModel.class.getResource(PokemonIconDir + id+".png");
+				rowData[1] = new ImageIcon(url);
 				rowData[2] = CommonUtils.capitalize(res.getString(2));
 				rowData[3] = CommonUtils.capitalize(res.getString(3));
 				rows.add(rowData);

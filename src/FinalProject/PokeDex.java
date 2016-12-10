@@ -11,6 +11,7 @@ import sun.awt.image.ImageCache.PixelsKey;
 import java.awt.Toolkit;
 import javax.swing.JPanel;
 
+import static FinalProject.PokeDex.PokemonIconDir;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 import java.awt.BorderLayout;
@@ -45,6 +46,7 @@ import java.awt.Component;
 import javax.swing.JPopupMenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.sql.SQLException;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -54,18 +56,18 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 public class PokeDex implements ActionListener, ListSelectionListener, KeyListener{
-	public static final String PokemonIconDir = "data\\pokemon\\icons\\";
+	public static final String PokemonIconDir = "/data/pokemon/icons/";
 
 	private JFrame framePokedex;
 	private JTextField searchField;
 
 	private PokeTableModel poketableModel;
-	private AutoLoginDialog login;
+	private AdvSearch advSearch;
 
 	// Widgets
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
-	private JMenu aboutMenu;
+	private JMenuItem aboutMenu;
 	private JMenuItem typeEffectsItem;
 
 	private JLabel pokemonLabel;
@@ -96,13 +98,21 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 	private void initialize() {
 		poketableModel = new PokeTableModel();
-
-		login = new AutoLoginDialog(poketableModel);
-		login.open();
+		try {
+			poketableModel.login();
+		} catch (ClassNotFoundException e2) {
+			CommonUtils.classNotFoundExceptionHandler(e2, framePokedex);
+			System.exit(1);
+		} catch (SQLException e2) {
+			CommonUtils.sqlExceptionHandler(e2, framePokedex);
+		}
+		
+		advSearch = new AdvSearch(poketableModel);
 
 		framePokedex = new JFrame();
 		framePokedex.setResizable(false);
-		framePokedex.setIconImage(Toolkit.getDefaultToolkit().getImage("data\\icon\\dex.png"));
+		URL url = PokeTableModel.class.getResource("/data/icon/dex.png");
+		framePokedex.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
 		framePokedex.setTitle("Pokedex");
 
 		framePokedex.setBounds(100, 100, 400, 600);
@@ -148,7 +158,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		advSearchButton = new JButton("Adv. Search");
 		advSearchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AdvSearch advSearch = new AdvSearch(poketableModel);
+				advSearch.show();
 			}
 		});
 		ControlPanel.add(advSearchButton);
@@ -188,18 +198,34 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		framePokedex.setJMenuBar(menuBar);
 
 		fileMenu = new JMenu("File");
+		aboutMenu = new JMenuItem("About");
+		fileMenu.add(aboutMenu);
 		menuBar.add(fileMenu);
 
-		typeEffectsItem = new JMenuItem("Type Effects");
-		typeEffectsItem.addActionListener(new ActionListener() {
+		aboutMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				JOptionPane.showMessageDialog(framePokedex, "Our team consists of Huan Wang, Junquan Lin, Khanh Duong, and Michael Villafuerte. \n"
+						+ "Our mutual love for Pokemon and the game competitive scene led us to pursuing \n"
+						+ "this topic. As of right now, there is not an easily accessed database that contain \n"
+						+ "the quintessential informations a competitive player would need without all the \n"
+						+ "fluffs from a wikia. Our common interest made the project much more enjoyable and \n"
+						+ "not like a chore. A few sleepless night were had, but the end result was very worth \n"
+						+ "the effort. This database will live on past this project, which is not true for the \n"
+						+ "end product of most of our assignments. In the future, it would be very nice to open \n"
+						+ "up this database to the wider competitive Pokemon community.", "About", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
-		fileMenu.add(typeEffectsItem);
 
-		aboutMenu = new JMenu("About");
-		menuBar.add(aboutMenu);
+		//		typeEffectsItem = new JMenuItem("Type Effects");
+		//		typeEffectsItem.addActionListener(new ActionListener() {
+		//			public void actionPerformed(ActionEvent e) {
+		//				//TODO
+		//			}
+		//		});
+		//fileMenu.add(typeEffectsItem);
+
+		//		aboutMenu = new JMenuItem("About");
+		//		menuBar.add(aboutMenu);
 
 		try {
 			poketableModel.nameSearch(searchField.getText().trim());
@@ -212,10 +238,10 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 	public void valueChanged(ListSelectionEvent e) {
 		if (table.getSelectedRow() == -1)
 			detailButton.setEnabled(false);
-		else
+		else {
 			detailButton.setEnabled(true);
-
-		poketableModel.setSelectedRow(table.getSelectedRow());
+			poketableModel.setSelectedRow(table.convertRowIndexToModel(table.getSelectedRow()));
+		}		
 	}
 
 	@Override
