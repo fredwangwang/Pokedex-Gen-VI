@@ -4,58 +4,23 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import sun.awt.image.ImageCache.PixelsKey;
-
 import java.awt.Toolkit;
+import java.awt.event.*;
+
 import javax.swing.JPanel;
 
-import static FinalProject.PokeDex.PokemonIconDir;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.GridLayout;
-import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JSlider;
-import javax.swing.JToggleButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import com.sun.webkit.dom.KeyboardEventImpl;
-
-import javax.swing.JScrollBar;
-import javax.swing.JEditorPane;
-import java.awt.Component;
-import javax.swing.JPopupMenu;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.sql.SQLException;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-public class PokeDex implements ActionListener, ListSelectionListener, KeyListener{
+public class PokeDex implements ActionListener, ListSelectionListener, KeyListener, MouseListener{
 	public static final String PokemonIconDir = "/data/pokemon/icons/";
 
 	private JFrame framePokedex;
@@ -63,6 +28,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 
 	private PokeTableModel poketableModel;
 	private AdvSearch advSearch;
+	private DetailDialog detail;
 
 	// Widgets
 	private JMenuBar menuBar;
@@ -150,7 +116,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		detailButton.setEnabled(false);
 		detailButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DetailDialog detail = new DetailDialog(poketableModel);
+				detail = new DetailDialog(poketableModel);
 			}
 		});
 		ControlPanel.add(detailButton);
@@ -191,6 +157,7 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 		table.getColumnModel().getColumn(0).setMinWidth(5);
 		table.getColumnModel().getColumn(0).setPreferredWidth(5);
 		table.addKeyListener(this);
+		table.addMouseListener(this);
 
 		scrollPane.setViewportView(table);
 
@@ -271,6 +238,37 @@ public class PokeDex implements ActionListener, ListSelectionListener, KeyListen
 			searchField.grabFocus();
 			searchField.setText(Character.toString(e.getKeyChar()));
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (e.getClickCount() == 2){
+			detail = new DetailDialog(poketableModel);
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// helper function to do 
